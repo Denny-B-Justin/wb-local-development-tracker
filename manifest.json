@@ -1,0 +1,492 @@
+{
+  "version": 1,
+  "locale": "en_US.UTF-8",
+  "metadata": {
+    "appmode": "python-dash",
+    "entrypoint": "app:app"
+  },
+  "python": {
+    "version": "3.11.9",
+    "package_manager": {
+      "name": "pip",
+      "version": "24.0",
+      "package_file": "requirements.txt"
+    }
+  },
+  "files": {
+    ".env.sample": {
+      "checksum": "27c900c8f849ad1250e8495e0d4cb5f6"
+    },
+    ".gitignore": {
+      "checksum": "7129c6246eb7c5bd2e7937f79825f464"
+    },
+    "README.md": {
+      "checksum": "e1a6ee31cab48d86b238254a76076ac5"
+    },
+    "app.py": {
+      "checksum": "9fe1cc62d18cde604c9cd10689b969aa"
+    },
+    "assets/fonts/LICENSE.txt": {
+      "checksum": "1c04f89084ca598c510d8dd4618f456a"
+    },
+    "assets/fonts/fira-sans-latin-500-normal.woff2": {
+      "checksum": "9410bb8f89e52fc8df5f0aca7009947c"
+    },
+    "assets/fonts/fira-sans-latin-600-normal.woff2": {
+      "checksum": "beb3d7395726910999a3b89eb76e9a4b"
+    },
+    "assets/fonts/fira-sans-latin-700-normal.woff2": {
+      "checksum": "43eb5ca3942e0f74137d8754629fb9e6"
+    },
+    "assets/fonts/fira-sans-latin-ext-500-normal.woff2": {
+      "checksum": "207a74105ab3926813fb44ffec512b8b"
+    },
+    "assets/fonts/fira-sans-latin-ext-600-normal.woff2": {
+      "checksum": "cb3ee579c8dfa3d041193221cf5056b0"
+    },
+    "assets/fonts/fira-sans-latin-ext-700-normal.woff2": {
+      "checksum": "e5bc5443fc3c668eb7b6f8e58c2f3097"
+    },
+    "assets/fonts/fira-sans-vietnamese-500-normal.woff2": {
+      "checksum": "de479691a5c6f3b146aedbbe7e458b89"
+    },
+    "assets/fonts/fira-sans-vietnamese-600-normal.woff2": {
+      "checksum": "167bc09749f9aed070060d1110e9a0aa"
+    },
+    "assets/fonts/fira-sans-vietnamese-700-normal.woff2": {
+      "checksum": "2bddeac7921b3d9b96790be052b12435"
+    },
+    "assets/fonts/inter-latin-400-normal.woff2": {
+      "checksum": "da03732a27e16543f09d6a6a62b0cdd4"
+    },
+    "assets/fonts/inter-latin-500-normal.woff2": {
+      "checksum": "51205681a1ba304816fc629e8989256b"
+    },
+    "assets/fonts/inter-latin-600-normal.woff2": {
+      "checksum": "2ede57db1a3a5f41f40467e7a43a1dd4"
+    },
+    "assets/fonts/inter-latin-700-normal.woff2": {
+      "checksum": "8ca0a51552960933d0fd52c19175cbe9"
+    },
+    "assets/fonts/inter-latin-ext-400-normal.woff2": {
+      "checksum": "0a6ff1a7c1e4c9608b7754285ec9c944"
+    },
+    "assets/fonts/inter-latin-ext-500-normal.woff2": {
+      "checksum": "90ff4f7e8bcb4856837418526e5cee75"
+    },
+    "assets/fonts/inter-latin-ext-600-normal.woff2": {
+      "checksum": "65aed4e1ef6306c7ed47669144eed4e3"
+    },
+    "assets/fonts/inter-latin-ext-700-normal.woff2": {
+      "checksum": "aa4c26661f6463f774f9f3471b87bb5c"
+    },
+    "assets/fonts/inter-vietnamese-400-normal.woff2": {
+      "checksum": "f31e0b32e489cef99e52685245383f2b"
+    },
+    "assets/fonts/inter-vietnamese-500-normal.woff2": {
+      "checksum": "054ab7c8eaec57a418af55eedc86fa8a"
+    },
+    "assets/fonts/inter-vietnamese-600-normal.woff2": {
+      "checksum": "72cc22e3e0e63878ae05a4aa4df1a5f0"
+    },
+    "assets/fonts/inter-vietnamese-700-normal.woff2": {
+      "checksum": "f7cdc3c0c4df70995db27105e574c4b8"
+    },
+    "assets/geo/context/nepal.json": {
+      "checksum": "14be97288a860bfffdc538d8578323a5"
+    },
+    "assets/geo/context/serbia.json": {
+      "checksum": "ef3d428712e44c9ef9a9729a17cfbfed"
+    },
+    "assets/geo/context/vietnam.json": {
+      "checksum": "5701d2ce6dfa4d56af5cafc1944178be"
+    },
+    "assets/geo/context/zambia.json": {
+      "checksum": "2dd97d130c6f21d2e50b74bf6e95b56e"
+    },
+    "assets/icons/LICENSE.txt": {
+      "checksum": "dc953377ac016250a399b2aa44a9adb5"
+    },
+    "assets/icons/arrow-down.svg": {
+      "checksum": "ead0f42e7daf430e88decd3ebfe2c43d"
+    },
+    "assets/icons/arrow-left-right.svg": {
+      "checksum": "f63015d51cd12d5b25f8bdded043c681"
+    },
+    "assets/icons/arrow-left.svg": {
+      "checksum": "914c85f1345916db6209befc6f85c10f"
+    },
+    "assets/icons/arrow-right.svg": {
+      "checksum": "f05b01bc8b9605a1d4c89e4cb1881afd"
+    },
+    "assets/icons/arrow-up-right.svg": {
+      "checksum": "493e306f2191c462aba2c623319b2ac2"
+    },
+    "assets/icons/arrow-up.svg": {
+      "checksum": "5f643c4a1cb2128fe83c4de4903afc93"
+    },
+    "assets/icons/chart-scatter.svg": {
+      "checksum": "81a6ec283c31a81715525f0022ef197c"
+    },
+    "assets/icons/check-bold.svg": {
+      "checksum": "29e6ed69e3f95f841cb632cef5004dd7"
+    },
+    "assets/icons/check.svg": {
+      "checksum": "b369003ef3e473d052e6dc0fc29be421"
+    },
+    "assets/icons/chevron-down.svg": {
+      "checksum": "d55306a8432e00ac03a2021ecc206d0c"
+    },
+    "assets/icons/chevron-right.svg": {
+      "checksum": "00a15ecb67592d47366ad1f183e5f9c9"
+    },
+    "assets/icons/download.svg": {
+      "checksum": "d93ab355d6e9e9e3bc416d58fd2270b1"
+    },
+    "assets/icons/earth.svg": {
+      "checksum": "7df59e17c9ac4bd2c15f6b3183ff1d12"
+    },
+    "assets/icons/external-link.svg": {
+      "checksum": "e12811f161515140c7d6fd61448ca0d4"
+    },
+    "assets/icons/file-text.svg": {
+      "checksum": "e529d595139741024ad3e8af9f9a8073"
+    },
+    "assets/icons/folder.svg": {
+      "checksum": "7d67016259caa95c247653acd96df225"
+    },
+    "assets/icons/globe.svg": {
+      "checksum": "48530dd935460c081cb37f2063258aa1"
+    },
+    "assets/icons/info.svg": {
+      "checksum": "531c2db0a3a710bc333d1c749c6fd841"
+    },
+    "assets/icons/layers.svg": {
+      "checksum": "446124f5a6a38cb2875816a6509534e7"
+    },
+    "assets/icons/leaf.svg": {
+      "checksum": "ed1aedf6dcc342914962876e55bf667f"
+    },
+    "assets/icons/link-2.svg": {
+      "checksum": "b91859dee8921547e8e4f708d0713355"
+    },
+    "assets/icons/list-tree.svg": {
+      "checksum": "bac6d70443f35fb626a16b5ea0d4e822"
+    },
+    "assets/icons/loader-circle.svg": {
+      "checksum": "fdec3da6d1e596dd151b074a686187b6"
+    },
+    "assets/icons/maximize-2.svg": {
+      "checksum": "2f93b0f7111eb4c7110eac574758c94f"
+    },
+    "assets/icons/menu.svg": {
+      "checksum": "f55dbcd5aa7a82c6c02ea386d508f68f"
+    },
+    "assets/icons/minus.svg": {
+      "checksum": "aadcd0e8b9df0fb4f48d45c774eb3683"
+    },
+    "assets/icons/network.svg": {
+      "checksum": "553a2e05e396993bba1c2cf7390c1f4b"
+    },
+    "assets/icons/pause.svg": {
+      "checksum": "c4c9b034552669384689ae29ab2b0374"
+    },
+    "assets/icons/play.svg": {
+      "checksum": "67d9dd707d1e8e8b143c7d8ff413f850"
+    },
+    "assets/icons/plus.svg": {
+      "checksum": "2e4a54ea56ad16acb89fbb2026c09466"
+    },
+    "assets/icons/printer.svg": {
+      "checksum": "54fb36ba2f902e4a992e27a8be0282f8"
+    },
+    "assets/icons/refresh-cw.svg": {
+      "checksum": "5cf41069853708e843731d5e29ff91d2"
+    },
+    "assets/icons/search.svg": {
+      "checksum": "f637fdfc2fb817a717682f1cdbf072fa"
+    },
+    "assets/icons/sparkles.svg": {
+      "checksum": "56c6a1398baac9f58215f7fa750864ea"
+    },
+    "assets/icons/table-2.svg": {
+      "checksum": "f92c0cd1a9aa034a4accde036bc4e1b0"
+    },
+    "assets/icons/trending-up.svg": {
+      "checksum": "e8b1b8fc91663a0af3a51926bda10e39"
+    },
+    "assets/icons/x.svg": {
+      "checksum": "d6274125831c4a05d23a023b5b41d2db"
+    },
+    "assets/img/about/2d-quadrant.png": {
+      "checksum": "930107066e6948af1a21e1e1a27d597e"
+    },
+    "assets/img/about/3d-pil-ranking.png": {
+      "checksum": "aad822ce1b6c2a23a1fb904bd9df42fa"
+    },
+    "assets/img/about/ai-recommendations.png": {
+      "checksum": "a799639b14e3b8d432537d35c14c08d0"
+    },
+    "assets/img/about/ai-swot.png": {
+      "checksum": "25dacd37b03337d56505e699ae6ef6af"
+    },
+    "assets/img/about/population-distribution.png": {
+      "checksum": "fa5c9922b3cc8612ac7141bcef4f8873"
+    },
+    "assets/img/about/project-selection.png": {
+      "checksum": "b48e776c36fba83299fac47e1738824f"
+    },
+    "assets/img/about/size-distribution.png": {
+      "checksum": "dd5be10d126c0fa431a15d44aede6f77"
+    },
+    "assets/img/about/strategy-availability.png": {
+      "checksum": "d3a0d7ff04d3428bf36f33f4be0b8b11"
+    },
+    "assets/img/brand/gpbp-suite.png": {
+      "checksum": "0b62dce575537a67dcac8ecf4cbb899d"
+    },
+    "assets/img/brand/icon.png": {
+      "checksum": "43d20917313e5fa59b16541c425af418"
+    },
+    "assets/img/brand/ldt-mark.png": {
+      "checksum": "43d20917313e5fa59b16541c425af418"
+    },
+    "assets/img/brand/ldt.svg": {
+      "checksum": "ff50ebbbfa79bc7a50904a2bd2971c8b"
+    },
+    "assets/img/landing/data-band.jpg": {
+      "checksum": "04b58f038679dc93c1ce583483605612"
+    },
+    "assets/img/landing/feature-brief.png": {
+      "checksum": "a8cdf9d5412ccc8501913ad3fe6d05ff"
+    },
+    "assets/img/landing/feature-compare.png": {
+      "checksum": "52cd09418ca4e141e094be23a825dcd9"
+    },
+    "assets/img/landing/feature-map.png": {
+      "checksum": "8c48e62b311beb5e9e7cf7439df8ed30"
+    },
+    "assets/img/landing/feature-profile.png": {
+      "checksum": "b409e9df502876233540341af6d898cd"
+    },
+    "assets/img/methodology/pil-diagram.png": {
+      "checksum": "525c13452c1d2b8649e40edcbc3153f7"
+    },
+    "assets/js/ldt-1-core.js": {
+      "checksum": "1daff7d446d8225057ef4a77ea9ee290"
+    },
+    "assets/js/ldt-2-map.js": {
+      "checksum": "b7924965dac87993ade80068a780db84"
+    },
+    "assets/js/ldt-3-charts.js": {
+      "checksum": "ba5f07b2650074101013e82d5ba82dfa"
+    },
+    "assets/js/ldt-4-hero.js": {
+      "checksum": "dbd951681abe735e309126e51098da4f"
+    },
+    "assets/js/ldt-5-brief.js": {
+      "checksum": "eec1758fcfbce50ee80ad6e3de21e92e"
+    },
+    "assets/styles.css": {
+      "checksum": "ebf5e73ab2af79cd67dedcc21a5f0e92"
+    },
+    "assets/vendor/maplibre/LICENSE.txt": {
+      "checksum": "c73ffe791f71e9dbcf26aeff3d6269ac"
+    },
+    "assets/vendor/maplibre/maplibre-gl-shared.mjs": {
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "assets/vendor/maplibre/maplibre-gl-worker.mjs": {
+      "checksum": "6780120c93360d506df1b5537c24a7f9"
+    },
+    "assets/vendor/maplibre/maplibre-gl.css": {
+      "checksum": "74e94ccfd98fc8a12872016ef665510b"
+    },
+    "assets/vendor/maplibre/maplibre-gl.mjs": {
+      "checksum": "1f85bc4bf231faf5ebd8ab8e9f99f7ce"
+    },
+    "constants.py": {
+      "checksum": "f53e6a429184974386df6ef2833d1f89"
+    },
+    "countries/__init__.py": {
+      "checksum": "51cc928cfe6d8ac2f6d3f2a545910b09"
+    },
+    "countries/npl.py": {
+      "checksum": "787c91687fe33b66017a28665d8c3289"
+    },
+    "countries/schema.py": {
+      "checksum": "fe384d635da1bc13c9f18104e1076a00"
+    },
+    "countries/srb.py": {
+      "checksum": "977ab04eff56415aadd1ddb7c91f117c"
+    },
+    "countries/vnm.py": {
+      "checksum": "93d3cb360ab1ec0e5a66cd9484d8835e"
+    },
+    "countries/zmb.py": {
+      "checksum": "b00485a2c75a54a6d2e6dfa4ca862eb0"
+    },
+    "data_snapshot/country_NPL.json.gz": {
+      "checksum": "c361de65a6f5e893ef33672031fc64a9"
+    },
+    "data_snapshot/country_SRB.json.gz": {
+      "checksum": "0f7d2cac00efaee08b433db72a06c211"
+    },
+    "data_snapshot/country_ZMB.json.gz": {
+      "checksum": "48abfaa849260f695a486a39767a08c3"
+    },
+    "data_snapshot/geometry_NPL.json.gz": {
+      "checksum": "051b417350eadd2a72181245c836f60f"
+    },
+    "data_snapshot/geometry_SRB.json.gz": {
+      "checksum": "aabc6a3d94be8c160a6e29c534c7cfff"
+    },
+    "data_snapshot/geometry_ZMB.json.gz": {
+      "checksum": "03b4d55c0c1080c961d79b83adf9ffa1"
+    },
+    "data_snapshot/inventory.json.gz": {
+      "checksum": "1ef4dcbaab774d91a064fa2c3d8a6b4b"
+    },
+    "data_snapshot/plans.json.gz": {
+      "checksum": "1ef4dcbaab774d91a064fa2c3d8a6b4b"
+    },
+    "locales/en.json": {
+      "checksum": "17e6d64aca325e9e5d1bd96a5f5516a3"
+    },
+    "locales/fr.json": {
+      "checksum": "df222c4d8f6305ab20bdd0eb8644fde7"
+    },
+    "pages/__init__.py": {
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "pages/about.py": {
+      "checksum": "3580f37796f0da09efcc78794e1091b0"
+    },
+    "pages/brief.py": {
+      "checksum": "dd64271b7d244ab63bd1bb4b60ed030d"
+    },
+    "pages/compare.py": {
+      "checksum": "bc1601ce565841a174d0dbe89e315adb"
+    },
+    "pages/data_trust.py": {
+      "checksum": "8090baa512cfb4faef681dc2e63465f7"
+    },
+    "pages/home.py": {
+      "checksum": "52dd2ac1641dfc4027b50cf556d3ed32"
+    },
+    "pages/map.py": {
+      "checksum": "1f820fe199cbc7bfa243fb316c9e72c1"
+    },
+    "pages/methodology.py": {
+      "checksum": "b07bc43f801654dc63857a5746f00334"
+    },
+    "pages/not_found.py": {
+      "checksum": "9c9e3543bd8a8d50f94c78e61d665eb3"
+    },
+    "pages/pages_constants.py": {
+      "checksum": "532f0ae3f96e9426fc539c2978a19e1f"
+    },
+    "pages/profile.py": {
+      "checksum": "bf206265fced9b7575fef3f601c76331"
+    },
+    "pages/release_notes.py": {
+      "checksum": "efcc7ef849eec0cce65e98ebc5a4f8b7"
+    },
+    "pages/resources.py": {
+      "checksum": "255f046e6c412de30f694c7507d9a04e"
+    },
+    "pages/strategy_inventory.py": {
+      "checksum": "6479a4cac40a907a08b595a049e95248"
+    },
+    "pages/units.py": {
+      "checksum": "68da0141471ffaff8636ea85bea82225"
+    },
+    "pages/why_ldt.py": {
+      "checksum": "560fde0192319d92af1e6159b1fd752b"
+    },
+    "requirements.txt": {
+      "checksum": "7109db0bb18724d4ca1c482b89779df4"
+    },
+    "scripts/build_map_context.py": {
+      "checksum": "71a39d631ce7fe00872c460d24083111"
+    },
+    "scripts/build_snapshot.py": {
+      "checksum": "d0d3fc5fe5bb424205e844b579af8557"
+    },
+    "scripts/check_country.py": {
+      "checksum": "3edc517c9ba2537371fdb7ea0dbb3524"
+    },
+    "scripts/uc_tables.sql": {
+      "checksum": "5fce55110a964eed517d750c9f83bcfc"
+    },
+    "services/__init__.py": {
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "services/ai/__init__.py": {
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "services/ai/cache.py": {
+      "checksum": "0929b7d5c7d824fc1e7ea6263078dc40"
+    },
+    "services/ai/clients.py": {
+      "checksum": "23d4870e3cb9cd75622d571ab126ac50"
+    },
+    "services/ai/parse.py": {
+      "checksum": "95d45c2e45474f175c1e9f4d52838c58"
+    },
+    "services/ai/pipeline.py": {
+      "checksum": "cf60d8a494918e5477c73651b5cbff0a"
+    },
+    "services/ai/prompts.py": {
+      "checksum": "082648a650e385613526a951e120938d"
+    },
+    "services/api.py": {
+      "checksum": "71324b9f0c79054841911a0a1f14bb68"
+    },
+    "services/assemble.py": {
+      "checksum": "a921ed5f719ff857bdf4d85686c543a0"
+    },
+    "services/catalog.py": {
+      "checksum": "c80cd8839d6c495187275f6224a8bb83"
+    },
+    "services/databricks.py": {
+      "checksum": "04d446db1f701f5ee202c100d51bcc93"
+    },
+    "services/i18n.py": {
+      "checksum": "2964ea6d8a5dd94f3ce05302084f0cee"
+    },
+    "services/inventory.py": {
+      "checksum": "b0beb310a3d5dc5a241f3f0d95c3aa61"
+    },
+    "services/model.py": {
+      "checksum": "2c65d90de737eba5ee50f6663a4c9031"
+    },
+    "services/plans.py": {
+      "checksum": "5d6ed555e013c2b8879de2f88d97d6aa"
+    },
+    "services/reference/indicator_definitions.json": {
+      "checksum": "c39c7a12dfe20c7ea3b4c1422d56ea82"
+    },
+    "services/security.py": {
+      "checksum": "73353d1552e6eb704dd7d7187fff531a"
+    },
+    "services/state.py": {
+      "checksum": "b310108e74cd4056455c3feb027303d0"
+    },
+    "services/store.py": {
+      "checksum": "7c2cdf4b59bc90c675835da14ef06f82"
+    },
+    "services/text.py": {
+      "checksum": "2d17c15430f1be8c2b69f4a6b4a6e0b2"
+    },
+    "utils/__init__.py": {
+      "checksum": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "utils/components.py": {
+      "checksum": "b2f81f34db01638a969d0b7b30bd4bab"
+    },
+    "utils/shell.py": {
+      "checksum": "2e7ad1ff68be2ac1ac777f341fd69ca8"
+    }
+  }
+}

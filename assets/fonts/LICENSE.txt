@@ -1,0 +1,4 @@
+Inter (c) The Inter Project Authors and Fira Sans (c) Mozilla Foundation / Telefonica S.A.
+Both are licensed under the SIL Open Font License, Version 1.1 (https://openfontlicense.org).
+The files here are unmodified latin, latin-ext and vietnamese subsets (from @fontsource), self-hosted
+so no request leaves the app for a font CDN.

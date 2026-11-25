@@ -1,0 +1,22 @@
+# Local Development Tracker (Dash)
+
+dash[compress]
+flask-compress
+plotly
+pandas
+numpy
+python-dotenv
+requests
+gunicorn
+
+# Azure Databricks Unity Catalog (OAuth service principal)
+databricks-sql-connector
+databricks-sdk
+pyarrow
+
+# Boundary geometry (decode, reproject, simplify)
+shapely
+pyproj
+
+# Planning brief: PDF text extraction
+pypdf

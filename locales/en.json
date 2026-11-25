@@ -1,0 +1,1167 @@
+{
+ "site": {
+  "name": "Local Development Tracker",
+  "short": "LDT",
+  "description": "Compare local development conditions, read municipality-level score drivers, and link planning evidence to public investment choices.",
+  "home": "Local Development Tracker home",
+  "suite": "Part of the GPBP Suite",
+  "footerTagline": "Local development evidence for public investment decisions.",
+  "copyright": "© {year} Local Development Tracker"
+ },
+ "nav": {
+  "site": "Site",
+  "footer": "Footer",
+  "why": "Why LDT?",
+  "methodology": "Methodology",
+  "resources": "Resources",
+  "releaseNotes": "Release notes",
+  "about": "About"
+ },
+ "language": {
+  "label": "Language",
+  "beta": "Beta",
+  "betaNote": "Machine-translated (DeepL), not yet reviewed. Some data names stay in English."
+ },
+ "common": {
+  "all": "All",
+  "close": "Close",
+  "open": "Open",
+  "remove": "Remove {name}",
+  "noData": "No data",
+  "opensInNewTab": "(opens in a new tab)",
+  "loading": "Loading",
+  "updating": "Updating…",
+  "shareView": "Share view",
+  "linkCopied": "Link copied",
+  "copyLink": "Copy this link",
+  "exportCsv": "Export CSV",
+  "export": "Export",
+  "showMore": "Show more",
+  "showAll": "Show all",
+  "search": "Search",
+  "year": "Year",
+  "reset": "Reset",
+  "preview": "Preview",
+  "yes": "Yes",
+  "no": "No",
+  "na": "–"
+ },
+ "notFound": {
+  "title": "Page not found",
+  "body": "This page or country workspace doesn't exist, or isn't published yet.",
+  "home": "Go to the home page"
+ },
+ "landing": {
+  "eyebrow": "Local Development Tracker",
+  "title": "Local development evidence for public investment decisions.",
+  "lead": "Compare local development conditions, read municipality-level score drivers, and link planning evidence to public investment choices.",
+  "openWorkspace": "Open a country workspace",
+  "selectCountry": "Select a country",
+  "selectCountryAria": "Select a country workspace",
+  "workspaceTitle": "What you can do in a workspace",
+  "features": {
+   "map": "Read pillar and indicator maps, with score drivers for every municipality",
+   "compare": "Compare peers in score space against provincial and national baselines",
+   "profile": "Profile a municipality — scores, trends and plan sources in one place",
+   "brief": "Generate a planning brief: narrative, SWOT and investment recommendations with cited sources"
+  },
+  "featureScreenshot": "Screenshot: {feature}",
+  "bandPhoto": "Hands typing on a laptop, with a line chart and bar chart overlaid",
+  "scoresTitle": "How scores work",
+  "scoresLead": "Geospatial, environmental, infrastructure and planning data turned into comparable 0–100 scores across three pillars, aggregated with equal weights.",
+  "readMethodology": "Read the methodology",
+  "pillars": {
+   "prosperity": {
+    "description": "Economic activity and opportunity.",
+    "indicators": "Nighttime luminosity · Built area · Tourism · Agricultural land"
+   },
+   "infrastructure": {
+    "description": "Service reach and connectivity.",
+    "indicators": "Broadband · Mobile internet · Access to schools & health"
+   },
+   "livability": {
+    "description": "Environment, climate risk and human development.",
+    "indicators": "Air quality · Hazard exposure · Land cover"
+   }
+  },
+  "heroAnimation": "Animated walkthrough of the Local Development Tracker: a map of municipalities, one municipality's scores, a comparison with a neighbour, and an AI-generated investment brief.",
+  "playAnimation": "Play animation",
+  "pauseAnimation": "Pause animation"
+ },
+ "workspace": {
+  "countryWorkspace": "Country workspace",
+  "release": "{year} release · {key}",
+  "nav": "{country} workspace",
+  "switchCountry": "Switch country",
+  "nationalPlan": "National plan",
+  "countryMenu": "Country: {country}. Switch country",
+  "current": "Current",
+  "selected": "selected",
+  "openMenu": "Open menu",
+  "closeMenu": "Close menu",
+  "sections": {
+   "map": "Map & drivers",
+   "compare": "Compare",
+   "brief": "Planning brief",
+   "data": "Data & trust",
+   "inventory": "Strategy inventory"
+  },
+  "loading": "Data for this workspace is being loaded from Databricks. Refresh in a minute.",
+  "notLoaded": "No data has been loaded for this workspace yet. Configure the Databricks connection or build a data snapshot (see the README)."
+ },
+ "units": {
+  "count": {
+   "one": "{count} {one}",
+   "other": "{count} {other}"
+  }
+ },
+ "labels": {
+  "area": "{name} {level}"
+ },
+ "baseline": {
+  "area": "{area} avg",
+  "national": "national avg"
+ },
+ "trust": {
+  "title": "Data & trust",
+  "coverage": "Coverage",
+  "boundaries": "Boundaries",
+  "planSources": "Plan sources",
+  "aiReadiness": "AI readiness",
+  "ready": "Ready",
+  "partial": "Partial",
+  "blocked": "Blocked",
+  "matched": "Matched",
+  "gaps": {
+   "one": "{count} gap",
+   "other": "{count} gaps"
+  },
+  "sourced": "{percent}% sourced",
+  "coverageDetail": "{units} · {year} release {key}",
+  "mappedDetail": "{units} mapped",
+  "planDetail": "{sourced} of {total} {areas} have plan sources"
+ },
+ "metrics": {
+  "compositeScore": "PIL composite score",
+  "pillarScore": "{pillar} score"
+ },
+ "context": {
+  "region": "Context filters",
+  "label": "Context",
+  "filterValue": "{label}: {value}",
+  "allAreas": "All {levels}",
+  "clear": "Clear {label}",
+  "snapshot": {
+   "units": "Units in context",
+   "population": "Population",
+   "meanComposite": "Mean PIL composite",
+   "release": "Release",
+   "phase": "Built in Phase {phase}. The numbers above come live from the database."
+  }
+ },
+ "dataTrust": {
+  "subtitle": "Coverage, boundaries, plan sources and AI readiness for the {year} release",
+  "releaseStatus": "Release status",
+  "pilVersion": "PIL v{version}",
+  "inventoryNote": "Strategy inventory: {ready} of {total} local documents AI-ready, {needs} need translation. <link>See inventory</link>",
+  "releases": {
+   "title": "Releases",
+   "release": "Release",
+   "scored": "Scored {units}",
+   "viewing": "Viewing",
+   "note": "Scores follow the <link>methodology</link>. Each year's release is scored on its own; units added in later releases have no earlier scores."
+  },
+  "gaps": {
+   "title": "Boundary gaps",
+   "hatched": "Shown hatched on the map.",
+   "unmapped": "Scored but not on the map ({count})",
+   "allMapped": "Every scored {unit} has a boundary.",
+   "allMappedInArea": "Every scored {unit} in this area has a boundary.",
+   "boundaryOnly": "Boundaries without scores ({count})",
+   "boundaryOnlyDetail": {
+    "one": "{count} boundary in the source file has no scored {unit}. Only the count was recorded when the data was loaded.",
+    "other": "{count} boundaries in the source file have no scored {unit}. Only the count was recorded when the data was loaded."
+   },
+   "allMatched": "Every boundary in the source file matches a scored unit."
+  },
+  "plans": {
+   "covered": "{sourced} of {total} {units} covered by a plan",
+   "coveredInArea": "{sourced} of {total} {units} in this area covered by a plan",
+   "coveredByArea": "{sourced} of {total} {units} covered by a {area} plan",
+   "coveredByAreaInArea": "{sourced} of {total} {units} in this area covered by a {area} plan",
+   "needed": "Planning briefs need a plan for alignment, SWOT and recommendations.",
+   "national": "National plan: <plans></plans>.",
+   "sourcedOf": "{sourced} of {total}",
+   "plan": "Plan",
+   "noPlan": "No plan",
+   "noPlanTracked": "No plan tracked",
+   "usedForAll": "Used for all {units} in {area}.",
+   "noneForArea": "No plan is tracked for {area}.",
+   "unassigned": "Unassigned"
+  },
+  "sources": {
+   "title": "Data sources",
+   "lead": "Where each indicator behind the scores comes from."
+  }
+ },
+ "inventory": {
+  "subtitle": "Local strategy and budget documents for each {unit}: coverage, publication year, translation and AI readiness",
+  "summary": "Summary",
+  "kpis": {
+   "expected": "{units} expected",
+   "expectedNote": "Scored in the {year} release",
+   "withDocuments": "With documents",
+   "withDocumentsNote": "At least one document source",
+   "coverageNote": "Share of {units}, not documents",
+   "documents": "Documents found",
+   "documentsNote": "Strategies, plans, budgets, other",
+   "aiReady": "AI-ready",
+   "aiReadyNote": "Usable in planning briefs",
+   "blocked": "Needs translation / validation",
+   "blockedNote": "Blocked before full AI use"
+  },
+  "byYear": "Documents by year of publication",
+  "unknownYearCount": "Unknown year: {count}",
+  "unknownYear": "Unknown year",
+  "unknown": "Unknown",
+  "yearTooltip": {
+   "one": "{year}: {count} document",
+   "other": "{year}: {count} documents"
+  },
+  "readinessTitle": "Readiness",
+  "readinessLead": "Documents by readiness; {missing} counts {units} with no document.",
+  "serbianNote": "Parsed Serbian-language documents count as AI-ready unless translation is flagged.",
+  "documentsTitle": "Documents",
+  "missingTitle": "{units} without a document ({count})",
+  "noneMissing": "Every listed {unit} has at least one document.",
+  "unlisted": {
+   "one": "{count} more {unit} is not in the inventory at all.",
+   "other": "{count} more {units} are not in the inventory at all."
+  },
+  "lastUpdated": "Inventory last updated {date}.",
+  "readiness": {
+   "aiReady": {
+    "label": "AI-ready",
+    "note": "Parsed and usable in planning briefs"
+   },
+   "notParsed": {
+    "label": "Found / Not Parsed",
+    "note": "Source found, text not extracted yet"
+   },
+   "needsTranslation": {
+    "label": "Needs Translation",
+    "note": "Blocked until translated"
+   },
+   "needsValidation": {
+    "label": "Needs Validation",
+    "note": "Source or parsing needs review"
+   },
+   "missing": {
+    "label": "Missing",
+    "note": "No document found"
+   }
+  },
+  "table": {
+   "searchPlaceholder": "Search {unit}, {region} or title",
+   "publicationYear": "Publication year",
+   "allYears": "All years",
+   "readiness": "Readiness",
+   "allReadiness": "All readiness",
+   "documentType": "Document type",
+   "allTypes": "All types",
+   "translation": "Translation",
+   "allTranslation": "All translation",
+   "showing": "Showing {shown} of {total} records",
+   "type": "Type",
+   "source": "Source"
+  },
+  "documentTypes": {
+   "strategy": "Strategy",
+   "plan": "Plan",
+   "budget": "Budget",
+   "other": "Other"
+  },
+  "translationStatus": {
+   "not_required": "Not required",
+   "translated": "Translated",
+   "needs_translation": "Needs translation",
+   "partial": "Partial",
+   "unknown": "Unknown"
+  }
+ },
+ "map": {
+  "tagline": "Subnational analytics for local economic development",
+  "pillar": "Pillar",
+  "indicator": "Indicator",
+  "allIndicators": "All indicators",
+  "region": "{metric} map",
+  "aria": "{metric} by {unit}. Click a {unit} to select it; double-click to open its profile. The same data is in the {units} list.",
+  "outsideContextNote": "Outside context shown in grey",
+  "boundaryGaps": {
+   "one": "{count} boundary gap",
+   "other": "{count} boundary gaps"
+  },
+  "boundariesMatched": "Boundaries matched",
+  "legend": "{label} scale from 0 to 100",
+  "score": "Score",
+  "loading": "Loading map…",
+  "loadError": "The map could not be loaded. The same data is in the unit list.",
+  "noData": "No data for this context. Try another year or area.",
+  "outsideContext": "Outside context",
+  "tooltipValue": "{metric}: {value}",
+  "zoomIn": "Zoom in",
+  "zoomOut": "Zoom out",
+  "fitContext": "Fit to context",
+  "compare": {
+   "add": "Compare",
+   "added": "In compare",
+   "full": "The compare tray holds up to 5"
+  },
+  "drawer": {
+   "label": "Selected unit",
+   "selected": "Selected",
+   "empty": "Select a {unit} on the map to see its scores and what drives them.",
+   "notFound": "No scores for this unit in the selected year.",
+   "loadError": "The unit's scores could not be loaded.",
+   "composite": "PIL composite <value>{value}</value>",
+   "drivers": "Score drivers",
+   "scoreDetail": "Score {score} · {baseline} {average}",
+   "vs": "vs {baseline}",
+   "note": "Component score minus the {baseline} ({units}, {year}).",
+   "openProfile": "Open profile"
+  }
+ },
+ "unitList": {
+  "subtitle": "Search, sort and filter every {unit} in the context",
+  "label": "{units} list",
+  "search": "Search {units}",
+  "searchPlaceholder": "Search {units} or {areas}",
+  "clearSearch": "Clear search",
+  "matches": "{shown} of {total} match",
+  "noneInContext": "No {units} have scores for this context and year.",
+  "noMatch": "No {units} match “{query}”.",
+  "columns": {
+   "rank": "Rank",
+   "population": "Population",
+   "area": "Area",
+   "planSource": "Plan source"
+  },
+  "planLink": ": {title} (opens in a new tab)",
+  "noPlan": "None",
+  "showing": "Showing {shown} of {total}",
+  "showMore": "Show {count} more"
+ },
+ "profile": {
+  "title": "Profile",
+  "tabs": {
+   "label": "Profile sections",
+   "drivers": "Score drivers",
+   "trend": "Trend {from}–{to}",
+   "peers": "Peers",
+   "plans": "Plans & sources"
+  },
+  "noScores": "{name} has no scores in the {year} release.",
+  "otherYears": "It has scores for {years}. Choose one of those years in the context bar.",
+  "generateBrief": "Generate planning brief",
+  "national": "national",
+  "scoreCards": {
+   "notRanked": "Not ranked",
+   "rank": "Rank {rank} of {total}",
+   "delta": "{delta} vs {baseline}"
+  },
+  "drivers": {
+   "title": "What moves the score",
+   "pointsVs": "Points vs {baseline}",
+   "note": "Each bar is the indicator score minus the {baseline} ({units}, {year}).",
+   "caption": "Indicator scores and difference from the {baseline}",
+   "indicator": "Indicator",
+   "pillar": "Pillar",
+   "score": "Score",
+   "vs": "vs {baseline}"
+  },
+  "trend": {
+   "overview": "PIL scores (composite and pillars)",
+   "oneScore": "One score vs averages",
+   "indicators": "{pillar} indicators",
+   "nationalAvg": "National avg",
+   "pilScores": "PIL scores",
+   "title": "{metric}, {from}–{to}",
+   "show": "Show",
+   "chart": "{metric} for {unit} by year",
+   "missing": "No scores for {unit} in {years}: it isn't in those releases.",
+   "caption": "Values by year",
+   "series": "Series"
+  },
+  "peers": {
+   "none": "Peers need all three pillar scores, and {name} doesn't have them for {year}.",
+   "title": "Most similar {units}",
+   "lead": "The {count} {units} in {country} whose prosperity, infrastructure and livability scores are closest to {name}'s in {year}.",
+   "name": "Name",
+   "distance": "Distance",
+   "compare": "Compare",
+   "thisProfile": "This profile",
+   "add": "Add {name} to compare",
+   "remove": "Remove {name} from compare",
+   "note": "Distance is measured in score points across the three pillars (lower is more similar)."
+  },
+  "plans": {
+   "plansFor": "Plans for {area}",
+   "noLocal": "No plan is tracked for {area}. Planning briefs for {unit} can still use the national plan, but alignment, SWOT and recommendations need a local plan.",
+   "national": "National plan",
+   "noNational": "No national plan is tracked.",
+   "dataSources": "Data sources",
+   "dataSourcesLead": "Where each indicator behind the scores comes from.",
+   "types": {
+    "national_development_plan": "National development plan",
+    "local_development_plan": "Local development plan"
+   }
+  }
+ },
+ "compare": {
+  "title": "Compare",
+  "heading": "Compare {units}",
+  "subtitle": "Peer positions in PIL score space against {level} and national baselines",
+  "groups": {
+   "scores": "PIL scores",
+   "indicators": "{pillar} indicators"
+  },
+  "size": {
+   "label": "Size",
+   "population": "Population",
+   "area": "Land area",
+   "none": "None"
+  },
+  "nationalAvg": "National avg",
+  "baselines": "Baselines",
+  "areaBaselineHint": "Select a {level} in the context bar to show its average",
+  "view": {
+   "label": "View",
+   "scatter": "Scatter",
+   "table": "Table"
+  },
+  "scatterplot": "Scatterplot",
+  "trayFull": "The tray is full ({max}). Remove one to select another.",
+  "clickToSelect": "Click points to select them for comparison.",
+  "missing": {
+   "one": "{count} without values not shown.",
+   "other": "{count} without values not shown."
+  },
+  "noPoints": "No {units} have both values for this context and year.",
+  "chart": {
+   "aria": {
+    "one": "{y} against {x} for {count} unit",
+    "other": "{y} against {x} for {count} units"
+   },
+   "ariaSized": {
+    "one": "{y} against {x} for {count} unit, sized by {size}",
+    "other": "{y} against {x} for {count} units, sized by {size}"
+   },
+   "axis": "{label} →",
+   "clickToRemove": "Click to remove · double-click to open",
+   "clickToSelect": "Click to select · double-click to open"
+  },
+  "tray": {
+   "label": "Selected for comparison",
+   "selected": "Selected ({count} of {max})",
+   "clear": "Clear",
+   "empty": "Click points on the chart, or add {units} here, from the map or from a profile.",
+   "table": "Side-by-side table",
+   "scatterplot": "Scatterplot",
+   "briefFor": "Brief for {name}",
+   "briefForSelection": "Brief for selection",
+   "selectToBrief": "Select a unit to brief",
+   "oneUnitOnly": "Planning briefs cover one unit for now; multi-unit briefs come later",
+   "oneUnitNote": "Planning briefs cover one {unit} for now. Remove others to brief one.",
+   "add": "Add",
+   "full": "The tray holds up to {max}",
+   "search": "Search {units}",
+   "noMatches": "No matches."
+  },
+  "table": {
+   "empty": "Nothing to compare yet. Select up to {max} {units} on the scatterplot, with “+ Add” below, or from the map or a profile.",
+   "highest": " (highest)",
+   "caption": "Selected {units} side by side, with area and national averages",
+   "indicator": "Indicator",
+   "collapseAll": "Collapse all",
+   "expandAll": "Expand all",
+   "rank": "Rank (composite)",
+   "population": "Population",
+   "landArea": "Land area",
+   "composite": "PIL composite",
+   "note": "Scores are 0–100. The highest {unit} in each row is in bold when more than one is selected."
+  }
+ },
+ "brief": {
+  "title": "Planning brief",
+  "subtitle": "AI-assisted narrative, SWOT and investment recommendations for one {unit}, with cited sources",
+  "englishOnly": "Planning briefs are generated in English.",
+  "planLabel": {
+   "top": "{name} provincial plan",
+   "local": "{name} local plan"
+  },
+  "sourceScores": "{country} PIL scores and indicator data · {key}",
+  "outputs": {
+   "narrative": "Narrative",
+   "alignment": "Plan alignment",
+   "swot": "SWOT",
+   "recommendations": "Investment recommendations"
+  },
+  "blocked": {
+   "chooseUnit": "Choose a unit to brief.",
+   "noKey": "AI generation is not configured on this site (no OpenAI key). Cached briefs still show.",
+   "off": "Generation is turned off on this site. Cached briefs still show.",
+   "noOutputs": "Choose at least one output."
+  },
+  "setup": "Brief setup",
+  "scope": "Scope",
+  "evidence": "Evidence",
+  "outputsLabel": "Outputs",
+  "scores": "PIL scores & drivers",
+  "alwaysUsed": "Always used",
+  "localPlan": "Local plan",
+  "noPlan": "No plan tracked for this unit",
+  "usedBy": "Used by alignment, SWOT and recommendations",
+  "nationalPlan": "National plan",
+  "webSearch": "Web search",
+  "webSearchHint": "Run a new search for recent context",
+  "notConfigured": "Not configured on this site",
+  "upload": "Upload a local document",
+  "comingSoon": "Coming soon",
+  "needsPlan": "Needs a local plan",
+  "impliedOutput": "Needed by a later output",
+  "generating": "Generating…",
+  "generate": "Generate brief",
+  "regenerate": "Regenerate brief",
+  "regenerateNote": "Regenerating makes new AI calls and replaces the cached brief.",
+  "notReady": "Not ready",
+  "readiness": "AI readiness · {detail}",
+  "chooseUnit": "Choose a unit in Brief setup, or open a profile and click <b>Generate planning brief</b>.",
+  "exportPdf": "Export PDF",
+  "markdown": "Markdown",
+  "heading": "{name} — planning brief",
+  "meta": "{area} · {score} · {year} · {key}",
+  "metaUpdated": "{area} · {score} · {year} · {key} · updated {date}",
+  "openProfile": "Open profile",
+  "loadingCached": "Loading cached brief",
+  "loadError": "The cached brief could not be loaded: {error}",
+  "noBrief": "No brief has been generated for {name} ({score}, {year}) yet.",
+  "chooseOutputs": "Choose outputs and click Generate brief.",
+  "sections": {
+   "narrative": "Score narrative",
+   "nationalPlan": "National plan",
+   "localPlan": "Local plan",
+   "swot": "SWOT",
+   "recommendations": "Investment recommendations",
+   "alignment": "Plan alignment",
+   "webContext": "Web context"
+  },
+  "themeLabel": "Score theme",
+  "steps": {
+   "label": "Brief progress",
+   "evidence": "Evidence",
+   "alignment": "Alignment",
+   "swot": "SWOT",
+   "recommendations": "Recommendations",
+   "done": " done",
+   "failed": " failed",
+   "inProgress": " in progress",
+   "notRun": " not run"
+  },
+  "scopePicker": {
+   "choose": "Choose a unit",
+   "search": "Search units",
+   "placeholder": "Search",
+   "noMatches": "No matches."
+  },
+  "output": {
+   "generating": "Generating…",
+   "sources": " (sources: {sources})",
+   "alignmentSummary": "Alignment summary",
+   "strongest": "Strongest areas of alignment",
+   "gaps": "Most important gaps or tensions",
+   "implications": "Implications for local planning",
+   "swotLabel": "SWOT analysis",
+   "strengths": "Strengths",
+   "weaknesses": "Weaknesses",
+   "opportunities": "Opportunities",
+   "threats": "Threats",
+   "missing": "Missing information",
+   "dataJustification": "Data-based justification",
+   "planJustification": "Plan-based justification",
+   "risks": "Implementation risks",
+   "actions": "Implementation actions",
+   "takeaways": "Key takeaways",
+   "signals": "Policy signals",
+   "local": "Why this matters locally",
+   "show": "Show",
+   "screening": "Screening evidence, not project appraisal.",
+   "disclaimer": "Generated with AI from the PIL scores and the plans listed above. Check claims against the sources before using them in planning decisions.",
+   "stageFailed": "This stage failed.",
+   "rateLimited": "Too many briefs have been generated recently. Try again later; briefs that were already generated still show.",
+   "networkHint": "The server couldn't reach the AI service or the plan's website. Try again; if it keeps failing, the plan link may be broken (see Data & trust)."
+  }
+ },
+ "methodology": {
+  "metaTitle": "Methodology",
+  "metaDescription": "How the Local Development Tracker turns local data into Prosperity, Infrastructure and Livability scores.",
+  "eyebrow": "Methodology · PIL v1.5",
+  "title": "How LDT scores are built",
+  "intro": "The Local Development Tracker turns geospatial, environmental, infrastructure, and planning data into comparable local-government indicators. This page explains how indicators are selected, processed, normalized, and aggregated into the Prosperity, Infrastructure, and Livability scores used throughout the app.",
+  "appliesTo": "Applies to",
+  "pipelineAria": "How scores are built",
+  "pipeline": {
+   "acquire": {
+    "title": "Acquire",
+    "detail": "Satellite, geospatial, official"
+   },
+   "reconcile": {
+    "title": "Reconcile",
+    "detail": "Boundaries & names"
+   },
+   "aggregate": {
+    "title": "Aggregate",
+    "detail": "To local units"
+   },
+   "normalize": {
+    "title": "Normalize",
+    "detail": "Per population / area"
+   },
+   "score": {
+    "title": "Score",
+    "detail": "0–100, equal weights"
+   }
+  },
+  "pillarsAria": "Pillars",
+  "indicatorCount": {
+   "one": "{count} indicator",
+   "other": "{count} indicators"
+  },
+  "framework": {
+   "title": "PIL framework",
+   "paragraphs": {
+    "replication": "The methodology is designed for country replication. Each country keeps its own administrative labels and planning context, while the analytical logic stays consistent: collect local indicators, harmonize them to the relevant subnational units, convert them into comparable scores, and expose the results for maps, scatterplots, driver analysis, and planning review.",
+    "transparency": "The framework is intentionally transparent. Users should be able to see the indicator source, understand how raw data becomes a score, and interpret the result as screening evidence for further validation.",
+    "pil": "The PIL framework organizes local development evidence around Prosperity, Infrastructure, and Livability. The diagram shows how indicator evidence can be connected to planning interpretation and investment prioritization."
+   },
+   "diagramAlt": "PIL framework diagram: the indicators under Livability, Infrastructure and Prosperity"
+  },
+  "indicatorSelection": {
+   "title": "Indicator selection logic",
+   "intro": "Indicators are selected to balance policy relevance with practical data coverage. The aim is not to include every possible local development measure, but to build a coherent evidence base that can be maintained and compared across local units.",
+   "criteria": {
+    "relevance": "Relevance to local development outcomes that can inform public investment and planning dialogue.",
+    "availability": "Availability at a subnational scale that can be harmonized across countries and administrative systems.",
+    "comparability": "Ability to convert raw measures into comparable 0-100 score series with transparent interpretation.",
+    "coverage": "Coverage across the Prosperity, Infrastructure, and Livability dimensions of the PIL framework."
+   },
+   "pillars": {
+    "prosperity": {
+     "body": "Prosperity captures local economic activity, productive intensity, and development opportunity. In the current country releases, it draws heavily on nighttime luminosity, built-area development, tourism activity, and agriculture-related land signals where available.",
+     "items": {
+      "luminosity": "Nighttime luminosity as a proxy for economic intensity and access to electricity-enabled activity.",
+      "normalized": "Population- and area-normalized measures so dense urban centers and smaller local units can be compared more fairly.",
+      "country": "Country-specific economic signals, such as tourism or agricultural land indicators, where they can be processed consistently."
+     }
+    },
+    "infrastructure": {
+     "body": "Infrastructure measures the availability and reach of systems that support local service delivery and connectivity. It combines digital access and service accessibility where those data are available.",
+     "items": {
+      "internet": "Broadband and mobile internet performance.",
+      "services": "Accessibility to schools, health facilities, and key local services.",
+      "connectivity": "Connectivity and access signals that help users compare service reach across local units."
+     }
+    },
+    "livability": {
+     "body": "Livability reflects environmental, climate-risk, and human-development conditions that shape daily life. The indicator set differs by country data availability, but it is designed to make environmental stress and quality-of-life signals visible at local scale.",
+     "items": {
+      "air": "Air quality and emissions indicators.",
+      "hazards": "Road and railway exposure to flood, heat, and other climate-related hazards.",
+      "land": "Land-cover, deforestation, or green-space signals where available.",
+      "human": "Human-development conditions that complement infrastructure and prosperity scores."
+     }
+    }
+   }
+  },
+  "dataSources": {
+   "title": "Data acquisition sources",
+   "intro": "The LDT combines scalable global datasets with country-specific sources where available. Each source is selected for its relevance to local development, spatial coverage, and ability to be processed into local-government units.",
+   "groups": {
+    "satellite": {
+     "title": "Satellite and environmental data",
+     "items": {
+      "viirs": "VIIRS nighttime lights for luminosity-based economic activity measures.",
+      "climate": "ERA5, OpenWeatherMaps, Climate Trace, and related climate or environmental datasets.",
+      "landCover": "Dynamic World and other land-cover products for built-area, vegetation, and land-use signals."
+     }
+    },
+    "geospatial": {
+     "title": "Geospatial and infrastructure data",
+     "items": {
+      "boundaries": "Administrative boundary files aligned to the relevant local-government tiers for each country.",
+      "population": "WorldPop and other gridded population sources for population aggregation and normalization.",
+      "spatial": "OpenStreetMap, Openrouteservice, WRI Aqueduct, and related spatial datasets for accessibility, transport, and risk measures."
+     }
+    },
+    "official": {
+     "title": "Official and planning sources",
+     "items": {
+      "plans": "National development plans, local strategies, budgets, and other planning documents where source links are available.",
+      "official": "Official country data, partner data, and validated administrative references used to interpret local conditions.",
+      "metadata": "Indicator metadata that records source provenance and interpretation notes for user review."
+     }
+    }
+   }
+  },
+  "preprocessing": {
+   "title": "Preprocessing and integration",
+   "intro": "Raw data are prepared before they are exposed in the app. The preprocessing pipeline converts heterogeneous input formats into consistent local-unit records that can be compared, mapped, and summarized.",
+   "steps": {
+    "boundaries": {
+     "title": "Boundary reconciliation",
+     "body": "Administrative names, identifiers, and geometries are harmonized so indicator tables, map boundaries, and planning-document records refer to the same local units."
+    },
+    "aggregation": {
+     "title": "Spatial aggregation",
+     "body": "Raster, vector, network, and point datasets are aggregated to the relevant local-government level. Raster values are summarized within boundaries; point and network features are spatially joined or measured by coverage, access, or exposure."
+    },
+    "normalization": {
+     "title": "Normalization",
+     "body": "Indicators are normalized by population, area, or another appropriate denominator when raw totals would otherwise favor larger local units."
+    },
+    "temporal": {
+     "title": "Temporal alignment",
+     "body": "Input data are assigned to annual releases where possible. When countries have multi-year releases, the same local-unit keys are preserved so users can compare trends over time."
+    }
+   }
+  },
+  "scoring": {
+   "title": "Score calculation and aggregation",
+   "intro": "Score calculation follows a simple interpretation rule: local units are compared against other local units in the same release, and higher scores indicate stronger relative performance for the selected indicator or pillar unless the metadata says otherwise.",
+   "steps": {
+    "scale": "Raw indicator values are transformed into comparable score values on a 0-100 scale, where higher values represent stronger relative performance for that indicator unless explicitly documented otherwise.",
+    "grouping": "Component scores are grouped under Prosperity, Infrastructure, and Livability according to the PIL framework.",
+    "weights": "Pillar scores use transparent equal-weight aggregation across available component scores unless a country-specific methodology states otherwise.",
+    "missing": "Missing component values are not imputed inside the public app; they are skipped in aggregation where the prepared score tables identify them as missing.",
+    "authoritative": "Published score tables are treated as the authoritative score source for maps, scatterplots, driver charts, and country landing-page summaries."
+   }
+  },
+  "limitations": {
+   "title": "Limitations and interpretation",
+   "groups": {
+    "coverage": {
+     "title": "Data coverage",
+     "items": {
+      "indicators": "Not every indicator is available for every country, year, or local unit.",
+      "open": "Open geospatial sources can be incomplete or unevenly updated across territories.",
+      "plans": "Planning-document coverage depends on whether source links are available and machine-readable."
+     }
+    },
+    "spatial": {
+     "title": "Spatial interpretation",
+     "items": {
+      "averages": "Local-government averages can hide neighborhood-level variation.",
+      "matching": "Boundary changes, naming differences, and language differences can affect matching quality.",
+      "screening": "Maps and scores should be read as screening evidence, not as a substitute for project appraisal."
+     }
+    },
+    "scoring": {
+     "title": "Scoring interpretation",
+     "items": {
+      "weights": "Equal weighting is transparent, but it may not reflect every sector priority or local policy preference.",
+      "needs": "A high score does not automatically mean a local unit has no investment needs; it indicates relative standing within the release.",
+      "validate": "Score results should be validated against local knowledge, sector diagnostics, and official planning processes."
+     }
+    }
+   },
+   "references": "Indicator descriptions, source references, and interpretation notes are surfaced through the indicator metadata views in the analytics workspace. Users should read charts and scores as decision-support evidence for discussion, validation, and prioritization rather than as final project-selection decisions."
+  }
+ },
+ "about": {
+  "metaTitle": "About",
+  "metaDescription": "What the Local Development Tracker is, how it works, and where it has been applied.",
+  "eyebrow": "pim-pam.net Geospatial Planning and Budgeting Tools",
+  "title": "Local Development Tracker QuickStart",
+  "version": "This version: {date}",
+  "lead": "This note sets out the motivation, method, and early country applications for the pim-pam.net Geospatial Planning and Budgeting Local Development Tracker tool. The LDT is designed to identify key development and public investment gaps at sub-national levels, illustrated through applications in Nepal, Serbia, and Zambia.",
+  "challenge": {
+   "title": "The sub-national challenge",
+   "paragraphs": {
+    "sngs": "Sub-national governments are vital to realizing frontline development outcomes, including territorial development and job creation. Yet relevant SNG levels, population size, and geographic scale vary substantially across countries.",
+    "data": "Statistical and administrative data concerning key development indicators may be missing or outdated. SNGs may also lack local development strategies that best address their challenges and opportunities. Big data from non-traditional and geospatial sources, including satellites, can help address these gaps.",
+    "tool": "The GPB LDT enables rapid analysis of sub-national development indicators across Prosperity, Livability, and Infrastructure. It deploys a curated list of development indicators, then uses data analytics, visualization, and AI extensions to help users identify patterns, trends, and planning insights.",
+    "strategies": "At the individual SNG level, local development strategies are often the starting point for understanding priorities. These documents are often dispersed, voluminous, uneven in quality, or out of date. The GPB LDT applies systematic AI analytics to assemble as comprehensive a repository of local strategy documents as possible."
+   }
+  },
+  "method": {
+   "title": "The method: two layers, any country",
+   "intro": "The GPB LDT workflow has two complementary layers. The first builds a sub-national data baseline. The second maps development strategies and translates the evidence into planning and public investment options."
+  },
+  "layerOne": {
+   "eyebrow": "Layer 1",
+   "title": "Build the sub-national evidence base",
+   "intro": "The first layer creates the spatial and statistical foundation for evidence-based analysis.",
+   "steps": {
+    "levels": {
+     "title": "Step 1 - Define the relevant levels of sub-national government",
+     "body": "Two sub-national administrative levels most relevant to the analysis are determined based on their degree of self-governance and discretionary budget control. Regions with partial to full control over budgets are better positioned to plan, invest in, and implement public projects."
+    },
+    "boundaries": {
+     "title": "Step 2 - Upload the best-available boundary files",
+     "body": "Boundaries from official or highly reputable sources are examined for geographical accuracy, administrative consistency, and data vintage. These boundaries form the spatial unit to which indicators, scores, maps, and local analytics are linked."
+    },
+    "indicators": {
+     "title": "Step 3 - Generate PIL indicators from global big data",
+     "body": "Global geospatial, environmental, infrastructure, and tabular datasets are processed into comparable sub-national indicators for Prosperity, Livability, and Infrastructure. Inputs include VIIRS nighttime lights, WorldPop, GADM, OpenStreetMap, Openrouteservice, Dynamic World, ERA5, WRI Aqueduct, Climate TRACE, and other public datasets."
+    },
+    "validate": {
+     "title": "Step 4 - Validate levels and trends for sample SNGs",
+     "body": "Sample municipalities or target SNGs are reviewed for plausible levels, spatial patterns, rankings, outliers, and score drivers. Results are compared with national statistics, administrative records, and local knowledge where available."
+    },
+    "national": {
+     "title": "Step 5 - Add national statistical and administrative data",
+     "body": "Global indicators provide a scalable first-pass view, but country-specific data strengthen interpretation. This may include own-source revenue, migration, employment, demographics, local strategies, national plans, project pipelines, and other planning documents."
+    }
+   },
+   "figureAlt": "Municipality population distribution chart",
+   "figureCaption": "Figure. Understand the size distribution of localities."
+  },
+  "layerTwo": {
+   "eyebrow": "Layer 2",
+   "title": "Map strategies and translate diagnostics into PIM options",
+   "intro": "The second layer connects the data baseline and multi-level government development strategies to the planning process.",
+   "step": "Step {n}",
+   "steps": {
+    "registry": "Build a registry of target local governments with official name, province, district, type, population, area, boundary ID, and available strategy documents.",
+    "scores": "Analyze PIL scores while identifying strengths and watchpoints across Prosperity, Livability, Infrastructure, and the PIL aggregate.",
+    "alignment": "Identify, consolidate, and assess alignment across national, provincial, sector, donor, and local development strategies.",
+    "narratives": "Use GenAI and reputable web context to produce municipality-level planning narratives, development gaps, likely drivers, peer comparisons, and policy alignment.",
+    "swot": "Generate evidence-backed SWOT analysis for each local government using PIL scores, strategy content, opportunities, and risks.",
+    "recommendations": "Translate PIL evidence, strategy alignment, and SWOT outputs into public investment and asset-management recommendations."
+   }
+  },
+  "highlights": {
+   "title": "Figure 1. Panel of GPB LDT country demo highlights",
+   "figures": {
+    "ranking": {
+     "alt": "Three-dimensional PIL ranking view for sub-national governments",
+     "caption": "SNGs can be ranked across three-dimensional Prosperity, Infrastructure, and Livability measures."
+    },
+    "quadrant": {
+     "alt": "Two-dimensional quadrant analysis for prosperity and livability",
+     "caption": "Users can use 2D quadrant analysis for further insights, such as identifying high-prosperity and high-livability leaders."
+    },
+    "strategyAvailability": {
+     "alt": "Strategy inventory availability view",
+     "caption": "The analysis shows where SNG development strategies are available."
+    },
+    "populationDistribution": {
+     "alt": "Population size distribution view",
+     "caption": "The tool also maps population size distribution across localities."
+    },
+    "aiSwot": {
+     "alt": "AI-powered SWOT analysis panel",
+     "caption": "AI-powered SWOT analysis brings together insights from PIL scores and development strategy mapping."
+    }
+   }
+  },
+  "replicability": {
+   "title": "Replicability: adding the next country",
+   "paragraphs": {
+    "design": "The LDT has been designed for replication across country settings. The workflow does not depend on one country's administrative system, data architecture, or planning terminology. Country, sub-national level, boundary file, indicator set, population layer, strategy documents, and complementary administrative data are inputs to a common method.",
+    "global": "Global geospatial and big-data sources can provide a consistent first-pass baseline for nearly any country and sub-national geography. Country-specific data can then be added where available to improve relevance and interpretation.",
+    "time": "The main time driver is not redesigning the method. It is the availability, quality, and validation of country boundaries, local strategies, and complementary administrative data. Once these inputs are assembled, the LDT provides a repeatable structure for turning local evidence into planning insights."
+   }
+  },
+  "limitations": {
+   "title": "Key limitations and validation needs",
+   "intro": "The LDT is most useful when its limitations are explicit. It provides a structured starting point for local development diagnostics, not a final judgment on local performance or project priority.",
+   "items": {
+    "proxies": {
+     "title": "Big-data proxies require validation",
+     "body": "Many PIL indicators are based on global geospatial datasets. These sources allow rapid, comparable analysis, but they may not perfectly reflect local conditions. Nighttime lights, accessibility layers, climate models, emissions estimates, and other proxy indicators should be checked against national statistics, administrative records, and local knowledge where available."
+    },
+    "boundaries": {
+     "title": "Administrative boundaries and SNG definitions matter",
+     "body": "Results depend on the sub-national level selected for analysis. District-level diagnostics may hide municipal differences, while municipal-level diagnostics may be too granular for some financing instruments. The chosen geography should match the policy question and the level of government with relevant planning, budgeting, or asset-management responsibility."
+    },
+    "strategies": {
+     "title": "Local strategy documents may be missing, outdated, or uneven",
+     "body": "The quality of the strategy registry depends on what is publicly available and what counterparts can provide. Where local plans are unavailable, the LDT can still use PIL evidence and higher-level plans, but recommendations should be treated as first-pass planning inputs rather than substitutes for local strategy preparation."
+    },
+    "ai": {
+     "title": "AI outputs need human review and source transparency",
+     "body": "AI-generated narratives, SWOTs, and investment recommendations should be inspectable. Users should be able to see which indicators, strategy documents, and source materials support each output. AI can accelerate synthesis, but sector teams, country teams, and local counterparts should review outputs before they inform policy dialogue or project pipelines."
+    },
+    "constraints": {
+     "title": "PIL scores do not capture every implementation constraint",
+     "body": "A low infrastructure or livability score may indicate a priority issue, but it does not establish project feasibility, fiscal affordability, readiness, procurement capacity, land availability, or operation and maintenance sustainability. The LDT should feed into public investment management processes where concepts can be screened, appraised, selected, and sequenced."
+    }
+   },
+   "principle": "The central principle is simple: use the LDT to make local development patterns visible, then validate, contextualize, and translate those patterns through the country's planning and PIM systems."
+  },
+  "findings": {
+   "title": "Selected country findings",
+   "intro": "The three country applications below illustrate how the same method adapts to different planning contexts: filling local evidence gaps where strategies are missing, moving from diagnostics to investment-ready project matching, and focusing on a specific class of localities such as mining districts.",
+   "columns": {
+    "country": "Country",
+    "focus": "Level of focus",
+    "levelOne": "# SNGs (Level 1)",
+    "levelTwo": "# SNGs (Level 2)",
+    "strategies": "% with strategies",
+    "topic": "Focus topic"
+   },
+   "rows": {
+    "NPL": {
+     "focus": "Municipalities",
+     "levelOne": "7 provinces",
+     "levelTwo": "753",
+     "strategies": "0*",
+     "topic": "Two municipalities from each of Madhesh, Karnali, and Sudurpashchim provinces"
+    },
+    "SRB": {
+     "focus": "Municipalities",
+     "levelOne": "29 districts",
+     "levelTwo": "161 Local Self Governments (LSGs)**",
+     "strategies": "~94%***",
+     "topic": "LIID Early Investors"
+    },
+    "ZMB": {
+     "focus": "Districts",
+     "levelOne": "10 provinces",
+     "levelTwo": "116",
+     "strategies": "~97%",
+     "topic": "Mining Districts"
+    }
+   },
+   "notes": {
+    "provincial": "* Provincial strategies are available.",
+    "kosovo": "** For Serbia, 174 if Kosovo is included.",
+    "coverage": "*** For Serbia, the 94% figure does not include Kosovo."
+   },
+   "stories": {
+    "nepal": {
+     "title": "Nepal: filling local planning evidence gaps",
+     "p1": "Nepal is a strong test case because the binding constraint is not the absence of local authority, but the absence of consistently available local planning evidence.",
+     "p2": "Municipal development plans are not systematically available or disclosed. The LDT can use PIL diagnostics, provincial strategies, and Nepal's Sixteenth Plan as higher-level policy anchors to generate first-pass local development narratives and investment recommendations."
+    },
+    "serbia": {
+     "title": "Serbia: moving from diagnostics to investment readiness",
+     "p1": "Serbia demonstrates how the LDT can move beyond local diagnostics to investment-ready project matching, supporting efforts around a national ePIM system and the LIID program.",
+     "p2": "The Veliko Gradiste example moves from school-access and digital-readiness evidence to recommendations on early childhood services, school infrastructure, digital equipment, and dual education linked to local labour-market needs."
+    },
+    "zambia": {
+     "title": "Zambia: local development, mining districts, and the 9th NDP",
+     "p1": "Zambia illustrates how the LDT can support spatial dimensions of the 9th National Development Plan and specific development challenges in mining districts.",
+     "p2": "Mining districts are an important test case for linking local economic development, PIM, environmental risk, fiscal benefit-sharing, ESG risk, infrastructure, and public financial management."
+    }
+   },
+   "figures": {
+    "recommendations": {
+     "alt": "AI-powered project recommendations screenshot",
+     "caption": "Figure 3. AI-powered project recommendations combining PIL indicators, relevant web search, and multi-level development plans."
+    },
+    "projects": {
+     "alt": "Curated existing projects in Serbia screenshot",
+     "caption": "Figure 4. Curated existing projects in Serbia to serve as the basis for initial project planning."
+    }
+   }
+  },
+  "contacts": {
+   "title": "Further resources and contacts",
+   "paragraphs": {
+    "masterclass": "Country teams interested in applying these approaches may schedule a 3-4 hour GPB LDT Masterclass, apply the tools in their country context, or request a tailored briefing on related Infrastructure Governance 2.0 diagnostics and other pim-pam.net digital tools.",
+    "team": "Contact the World Bank Global PIM-PAM Solutions Team: Kai-Alexander Kaiser, Hyunseok Kim, Fabienne Mroczka, and Kaushiki Singh.",
+    "thanks": "The team thanks the global partners of the World Bank Financial Management Umbrella Program and the Japan Quality of Infrastructure Investment Partnership program for supporting this work."
+   }
+  },
+  "referencesTitle": "Selected references"
+ },
+ "resources": {
+  "metaTitle": "Resources",
+  "metaDescription": "LDT briefings, decks and country packs.",
+  "eyebrow": "Resources",
+  "title": "Resources",
+  "intro": "Briefings, decks and notebooks for the Local Development Tracker, and a pack of materials for each country.",
+  "openFolder": "Open folder",
+  "openCountryFolder": "Open {country} folder",
+  "packTitle": "{country} country pack",
+  "formats": {
+   "briefing": "Briefing",
+   "onePager": "One-pager",
+   "slideDeck": "Slide deck",
+   "notebook": "Notebook",
+   "updateNote": "Update note"
+  },
+  "core": {
+   "title": "LDT reference materials",
+   "description": "Shared source folder for the core Local Development Tracker overview, briefing, and presentation materials."
+  },
+  "packs": {
+   "SRB": {
+    "description": "Country update note and analytical notebooks for Serbia local infrastructure, inclusion, jobs, and replication work."
+   },
+   "ZMB": {
+    "description": "Demo deck and notebooks for Zambia LDT exploration, AI-assisted analysis, and country presentation materials."
+   },
+   "NPL": {
+    "description": "Shared workspace for Nepal-specific documents, demos, analyses, and follow-up materials as they are added.",
+    "empty": "No top-level files were listed in the shared folder yet. Open the folder to add or review Nepal materials."
+   }
+  },
+  "files": {
+   "briefing": "Long-form briefing note covering the motivation, method, early country applications, and implementation considerations for the LDT.",
+   "onePager": "Concise overview for quickly explaining what the LDT provides, how it supports country teams, and where it fits in the GPB suite.",
+   "introDeck": "Presentation deck for introducing the LDT workflow, country replication model, and evidence-to-planning use cases.",
+   "srbUpdate": "Serbia update note for the sub-national GPB / LIID analysis and current country-facing findings.",
+   "srbVisualization": "Notebook for visualizing Serbia results and reproducing the LIID analytical workflow.",
+   "srbMigration": "Notebook covering Serbia migration and job creation analyses linked to local development patterns.",
+   "zmbDemos": "Country demo deck for sharing Zambia-specific LDT findings and examples with stakeholders.",
+   "zmbNotebook": "Notebook for exploring Zambia LDT data preparation, analysis, and visualization outputs.",
+   "zmbAi": "Notebook demo for AI-assisted Zambia analysis and narrative generation workflows.",
+   "zmbOsr": "Notebook comparing Zambia PIL score patterns with own-source revenue outcomes and mining-district context."
+  }
+ },
+ "releaseNotes": {
+  "metaTitle": "Release notes",
+  "metaDescription": "What's changed in the Local Development Tracker, newest first.",
+  "eyebrow": "Release notes",
+  "title": "Release notes",
+  "intro": "What's changed in the Local Development Tracker, newest first.",
+  "englishOnly": "Release notes are published in English only.",
+  "typesAria": "Release types",
+  "types": {
+   "major": {
+    "label": "Major",
+    "description": "Significant platform, data model, country coverage, or workflow updates."
+   },
+   "minor": {
+    "label": "Minor",
+    "description": "Focused UI/UX, analytics, content, or workflow improvements."
+   },
+   "patch": {
+    "label": "Patch",
+    "description": "Bug fixes, deployment fixes, copy corrections, and stability updates."
+   },
+   "operational": {
+    "label": "Operational",
+    "description": "Internal testing, preview deployments, and validation-only releases."
+   }
+  },
+  "comingNextTitle": "Coming next",
+  "comingNext": {
+   "countries": "<b>More countries</b>: a single command to onboard a country from its data files, starting with Romania or Albania.",
+   "briefs": "<b>Briefs for several units</b> at once, from the Compare selection.",
+   "upload": "<b>Upload a local document</b> to use as evidence in a planning brief."
+  },
+  "inPreview": "In preview",
+  "latest": "Latest"
+ },
+ "why": {
+  "metaTitle": "Why LDT?",
+  "metaDescription": "The problem the GPB Local Development Tracker addresses, what it does, and its limits.",
+  "eyebrow": "Why LDT?",
+  "title": "GPB Local Development Tracker (LDT)",
+  "lead": "Problem statement",
+  "onThisPage": "On this page",
+  "problem": {
+   "title": "The problem",
+   "paragraphs": {
+    "p1": "Sub-national governments (SNGs) are critical actors in most countries for delivering social and economic development, including more and better jobs (MBJ) and poverty reduction. Municipalities, districts, and provinces plan, finance, and maintain much of the infrastructure and many of the services that shape local prosperity and livability.",
+    "p2": "However, decision makers at both national and sub-national levels typically lack comparative and timely information on the relative development needs and priorities across different types of SNGs. Available administrative and statistical data fail to capture key dimensions of sub-national development, including measures of prosperity, infrastructure, and livability. Where such data exist, they are often published with long lags, at aggregation levels that do not match the units responsible for decisions, or without the consistency needed to benchmark one locality against its peers. Where administrative boundaries change, historical administrative and statistical data series no longer correspond to the newly defined entities.",
+    "p3": "Sub-national strategies and risk assessments (e.g., for climate change) are fragmented, variable in quality, and often outdated. In many countries, no systematic inventory exists of which SNGs have a current development strategy, how old it is, and whether it is available in a machine-readable form. Local strategies are rarely reconciled with provincial and national development plans, and national programs rarely draw on local evidence. Exposure of local assets and populations to climate hazards such as floods and heatwaves is seldom quantified at the SNG level, even though resilience is increasingly central to public investment decisions.",
+    "p4": "Decision makers therefore find it difficult to translate sub-national development measures or strategic documents into actionable development interventions. Without a coherent presentation of initial data baselines, it is also difficult to systematically target priority data gaps—gaps that could be addressed either through emerging geospatial big data sources (e.g., satellite or mobility data) or through new administrative and statistical data collection."
+   }
+  },
+  "does": {
+   "title": "What the GPB LDT does",
+   "paragraphs": {
+    "p1": "A GPB Local Development Tracker (LDT) deployment serves as a starting point for data-informed decision making in support of local development, including the prioritization, preparation, and delivery of capital investments.",
+    "p2": "The tool provides a rapid contextualization of SNG development levels by constructing measures of prosperity, infrastructure, and livability from globally available geospatial big data, such as nighttime lights, built-area and land-cover products, connectivity and accessibility layers, emissions and air-quality data, and hazard exposure datasets. Indicators are combined into transparent 0–100 pillar scores, and each score is accompanied by its drivers, so that users can see not only how a locality ranks but why. Localities can be compared against provincial and national baselines and against their most similar peers, and trends can be tracked across successive data releases. A key advantage is that a GPB LDT instance can be rapidly applied in any country, regardless of administrative and statistical data availability or recent boundary changes.",
+    "p3": "The GPB LDT also organizes the full set of available strategy and risk assessment documents. Strategy inventories track plan coverage, currency, and AI readiness across all SNGs, while AI-assisted analysis distills locality-specific and national Local Economic Development (LED) Strengths, Weaknesses, Opportunities, and Threats (LED-SWOT). Building on these inputs, the tool generates structured planning briefs that combine indicator narratives, SWOT findings, alignment with national and provincial plans, and investment recommendations, each with numbered citations to the underlying data, documents, and web sources."
+   }
+  },
+  "glance": {
+   "title": "At a glance",
+   "scores": {
+    "title": "Comparable scores",
+    "body": "Prosperity, infrastructure and livability on transparent 0–100 scales, built from global geospatial data."
+   },
+   "drivers": {
+    "title": "Drivers, not just ranks",
+    "body": "Every score comes with the indicators behind it, compared with provincial, national and peer baselines."
+   },
+   "anyCountry": {
+    "title": "Any country",
+    "body": "Works regardless of administrative data availability or recent boundary changes."
+   },
+   "briefs": {
+    "title": "Cited planning briefs",
+    "body": "Strategy inventories and AI-assisted SWOT analysis feed planning briefs with numbered citations to data, documents and web sources."
+   }
+  },
+  "cta": {
+   "title": "See the evidence for your country",
+   "body": "Open a country workspace to explore scores, their drivers and planning briefs.",
+   "methodology": "Read the methodology"
+  },
+  "scope": {
+   "title": "Scope and limitations",
+   "body": "The GPB LDT is not a substitute for national statistical and administrative data sources in sub-national development decision support. Its scores are screening evidence rather than project appraisal: they do not capture fiscal affordability, procurement readiness, or operations and maintenance requirements, and geospatial proxies should be validated against official statistics where these exist. Rather, deployments serve to enhance targeting and to promote the use of modern techniques, including Artificial Intelligence, Machine Learning (ML), and Large Language Models (LLMs), with human review of all AI-generated outputs. Through the GPB Big Data Observatory and partnerships with entities such as the European Space Agency (ESA), the GPB LDT continually improves how geospatial big data is harnessed for LED insights across both urban and rural localities."
+  },
+  "modules": {
+   "title": "Supplementary modules",
+   "body": "Supplementary modules extend the GPB LDT to additional analytical questions. The framework estimates prospective MBJ impacts from LED support in areas such as own-source revenue mobilization, access to market-based finance, improved public investment and asset management, and public services for firms and workers. Country-specific modules—such as fiscal benefit-sharing and ESG risk analysis for mining districts, or migration and job-creation analysis linked to local infrastructure investment—apply the same evidence base to the policy questions that matter most in each context."
+  },
+  "home": {
+   "title": "Local governments deliver development, but rarely have the evidence to target it.",
+   "problem": {
+    "title": "The problem",
+    "body": "Sub-national data is scarce, late or inconsistent, and local strategies are fragmented, so needs are hard to compare across municipalities, districts and provinces."
+   },
+   "does": {
+    "title": "What LDT does",
+    "body": "It builds comparable 0–100 prosperity, infrastructure and livability scores from global geospatial data, shows what drives them, and turns strategies into cited planning briefs."
+   },
+   "scope": {
+    "title": "Where it fits",
+    "body": "Screening evidence to target investment and data collection, in any country. Not a substitute for official statistics or project appraisal."
+   },
+   "link": "Read why LDT"
+  }
+ },
+ "data": {
+  "countries": {
+   "NPL": "Nepal",
+   "SRB": "Serbia",
+   "ZMB": "Zambia",
+   "VNM": "Vietnam"
+  },
+  "levels": {
+   "province": {
+    "one": "Province",
+    "other": "Provinces"
+   },
+   "district": {
+    "one": "District",
+    "other": "Districts"
+   },
+   "municipality": {
+    "one": "Municipality",
+    "other": "Municipalities"
+   },
+   "commune": {
+    "one": "Commune",
+    "other": "Communes"
+   }
+  },
+  "pillars": {
+   "composite": "Composite",
+   "prosperity": "Prosperity",
+   "infrastructure": "Infrastructure",
+   "livability": "Livability"
+  },
+  "indicators": {},
+  "aiMessage": {},
+  "landingMeta": {}
+ }
+}
