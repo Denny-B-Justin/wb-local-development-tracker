@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import time
 from datetime import datetime, timezone
 from typing import Any
 
@@ -256,12 +257,17 @@ def run_stage(context: dict[str, Any], stage: str, mode: str, visitor: str) -> d
     if stage not in DOCUMENT_STAGES:
         if cache.runs_last_24h() >= constants.AI_DAILY_RUN_LIMIT or not visitor_limiter.hit(visitor):
             return failure(stage, "AI generation limit reached. Try again later.")
+    started = time.time()
+    where = f"{scope['countryCode']} {context['municipality']['name']} {scope['scoreId']} {scope['releaseKey']}"
+    log.info("Brief stage %s started (%s, mode=%s)", stage, where, mode)
     try:
         result = _generate(stage, context, results)
     except Exception as exc:  # noqa: BLE001
-        log.warning("Stage %s failed: %s", stage, exc)
+        log.warning("Brief stage %s FAILED after %.1fs (%s): %s: %s", stage, time.time() - started, where, type(exc).__name__, exc)
         cache.record_run(scope, stage, "failed")
         return failure(stage, str(exc)[:400] or "This stage failed.")
+    log.info("Brief stage %s %s in %.1fs (%s, model=%s, sources=%d)", stage, result["status"], time.time() - started, where,
+             result["modelName"], len(result.get("sourceReferences") or []))
     if mode == "regenerate":
         result["cacheStatus"] = "regenerated"
     if not result.get("structuredOutput", {}).get("skipped") or result["modelName"] != "none":

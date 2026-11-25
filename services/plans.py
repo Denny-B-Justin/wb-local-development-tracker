@@ -55,5 +55,8 @@ def shape(frame: pd.DataFrame) -> dict[str, Any]:
 def load_from_databricks() -> dict[str, Any]:
     frame = databricks.read_optional(constants.UC_SHARED_TABLES["plan_sources"])
     shaped = shape(frame)
-    log.info("Plan sources: %s", {k: len(v["local"]) for k, v in shaped.items()})
+    if frame.empty:
+        log.info("Plan sources: none loaded (%s is missing or empty)", constants.UC_SHARED_TABLES["plan_sources"])
+    else:
+        log.info("Plan sources: %d rows -> %s", len(frame), {k: {"national": len(v["national"]), "local areas": len(v["local"])} for k, v in shaped.items()})
     return shaped

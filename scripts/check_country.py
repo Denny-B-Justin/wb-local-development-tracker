@@ -16,7 +16,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import countries  # noqa: E402
-from services import assemble, databricks  # noqa: E402
+from services import assemble, databricks, logs  # noqa: E402
 
 
 def main() -> int:
@@ -24,6 +24,7 @@ def main() -> int:
     parser.add_argument("iso3")
     parser.add_argument("--describe", action="store_true")
     args = parser.parse_args()
+    logs.setup()
     country = countries.BY_ISO3.get(args.iso3.upper())
     if not country:
         print(f"{args.iso3}: add countries/{args.iso3.lower()}.py and register it in countries/__init__.py first.")

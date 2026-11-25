@@ -42,13 +42,13 @@
       "checksum": "95d45c2e45474f175c1e9f4d52838c58"
     },
     "ai/pipeline.py": {
-      "checksum": "49a7980ec223b04777d5d91a1a2d63b4"
+      "checksum": "619b770a72aa5da30da14391d679594a"
     },
     "ai/prompt.py": {
       "checksum": "94340cb5b3c7e5a0c84009d1bad3cf3c"
     },
     "app.py": {
-      "checksum": "9fe1cc62d18cde604c9cd10689b969aa"
+      "checksum": "a61b15dd9757d4d09b84ea1a99f4a067"
     },
     "assets/fonts/LICENSE.txt": {
       "checksum": "1c04f89084ca598c510d8dd4618f456a"
@@ -336,7 +336,7 @@
       "checksum": "6c3a9437ff27a7c91c1811896985fde3"
     },
     "countries/gin.py": {
-      "checksum": "abb0a25c5e0e9f1022ccafd35226baef"
+      "checksum": "ac654981cdef2cdb7ff4b8be8cb11144"
     },
     "countries/npl.py": {
       "checksum": "787c91687fe33b66017a28665d8c3289"
@@ -450,10 +450,10 @@
       "checksum": "71a39d631ce7fe00872c460d24083111"
     },
     "scripts/build_snapshot.py": {
-      "checksum": "d0d3fc5fe5bb424205e844b579af8557"
+      "checksum": "45c36053b47dc0c3f63ac2431c6c665d"
     },
     "scripts/check_country.py": {
-      "checksum": "3edc517c9ba2537371fdb7ea0dbb3524"
+      "checksum": "1cc5f60729d18aff1b42cbbb9762d82b"
     },
     "scripts/uc_tables.sql": {
       "checksum": "5fce55110a964eed517d750c9f83bcfc"
@@ -465,25 +465,28 @@
       "checksum": "8e73ac98e143f346562b4c1fa2ec77f4"
     },
     "services/assemble.py": {
-      "checksum": "a921ed5f719ff857bdf4d85686c543a0"
+      "checksum": "d94edb3d1a08acefa97a089e43f6d53c"
     },
     "services/catalog.py": {
       "checksum": "c80cd8839d6c495187275f6224a8bb83"
     },
     "services/databricks.py": {
-      "checksum": "04d446db1f701f5ee202c100d51bcc93"
+      "checksum": "413f6ad4cae418524ef6c95729e2f79c"
     },
     "services/i18n.py": {
       "checksum": "2964ea6d8a5dd94f3ce05302084f0cee"
     },
     "services/inventory.py": {
-      "checksum": "b0beb310a3d5dc5a241f3f0d95c3aa61"
+      "checksum": "07493aef22ee04e84f23a909c7e31648"
+    },
+    "services/logs.py": {
+      "checksum": "e74a945a2c4459fc97fff4b25278c0d6"
     },
     "services/model.py": {
       "checksum": "2c65d90de737eba5ee50f6663a4c9031"
     },
     "services/plans.py": {
-      "checksum": "5d6ed555e013c2b8879de2f88d97d6aa"
+      "checksum": "e4d8cb6c3399a4240856ccb21db63dc6"
     },
     "services/reference/indicator_definitions.json": {
       "checksum": "c39c7a12dfe20c7ea3b4c1422d56ea82"
@@ -495,7 +498,7 @@
       "checksum": "b310108e74cd4056455c3feb027303d0"
     },
     "services/store.py": {
-      "checksum": "8e74876afe84b1b909a0279f9b0548a9"
+      "checksum": "1a3588a2e1ec41dc1cb5b1b1d6739d52"
     },
     "services/text.py": {
       "checksum": "2d17c15430f1be8c2b69f4a6b4a6e0b2"
