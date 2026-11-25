@@ -1,4 +1,4 @@
-"""Outbound HTTP for the brief: the LLM, Exa search, and plan-document downloads (SSRF-guarded)."""
+"""Plan documents: SSRF-guarded download, text extraction, passages, and passage selection for a prompt."""
 
 from __future__ import annotations
 
@@ -14,46 +14,7 @@ import requests
 import constants
 
 USER_AGENT = "LDT-AI/2.0 (+wb-local-development-tracker)"
-
-
-def generate(system: str, prompt: str) -> tuple[str, str]:
-    if not constants.OPENAI_API_KEY:
-        raise RuntimeError("OPENAI_API_KEY is not configured.")
-    response = requests.post(
-        f"{constants.OPENAI_BASE_URL}/chat/completions",
-        headers={"Authorization": f"Bearer {constants.OPENAI_API_KEY}", "Content-Type": "application/json", "User-Agent": USER_AGENT},
-        json={"model": constants.OPENAI_MODEL, "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}]},
-        timeout=constants.AI_HTTP_TIMEOUT_SECONDS,
-    )
-    if response.status_code >= 400:
-        raise RuntimeError(f"AI request failed ({response.status_code}).")
-    payload = response.json()
-    text = "\n\n".join(
-        (choice.get("message") or {}).get("content") or "" for choice in payload.get("choices", [])
-    ).strip()
-    if not text:
-        raise RuntimeError("The AI service returned an empty response.")
-    return text, payload.get("model") or constants.OPENAI_MODEL
-
-
-def exa_search(query: str, limit: int = 6) -> list[dict[str, Any]]:
-    if not constants.EXA_API_KEY:
-        return []
-    response = requests.post(
-        "https://api.exa.ai/search",
-        headers={"x-api-key": constants.EXA_API_KEY, "Content-Type": "application/json", "User-Agent": USER_AGENT},
-        json={"query": query[:500], "numResults": limit, "type": "auto", "contents": {"text": {"maxCharacters": 4000}}},
-        timeout=constants.AI_HTTP_TIMEOUT_SECONDS,
-    )
-    if response.status_code >= 400:
-        raise RuntimeError(f"Web search failed ({response.status_code}).")
-    hits = []
-    for item in response.json().get("results", []):
-        url = item.get("url") or ""
-        if url.startswith(("https://", "http://")):
-            hits.append({"title": (item.get("title") or url)[:300], "url": url, "text": item.get("text") or "",
-                         "publishedDate": item.get("publishedDate"), "score": item.get("score")})
-    return hits
+STORED_PASSAGES = 80
 
 
 def _public_host(host: str) -> bool:
@@ -102,9 +63,27 @@ def extract_text(data: bytes, content_type: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", text)).strip()
 
 
-def passages(text: str) -> list[dict[str, Any]]:
+def passages(text: str, limit: int | None = STORED_PASSAGES) -> list[dict[str, Any]]:
     blocks = [b.strip() for b in re.split(r"\n{2,}", text) if len(b.strip()) > 80]
     if not blocks:
         words = text.split()
         blocks = [" ".join(words[i:i + 180]) for i in range(0, len(words), 180)]
-    return [{"id": f"passage-{i + 1}", "title": None, "text": block[:4000]} for i, block in enumerate(blocks[:80])]
+    return [{"id": f"passage-{i + 1}", "title": None, "text": block[:4000]} for i, block in enumerate(blocks[:limit])]
+
+
+def select(document: dict[str, Any], terms: list[str], limit: int = 12) -> list[tuple[int, str]]:
+    """The ``limit`` passages most about ``terms``, in document order, as (1-based number, text).
+
+    Reads the whole extracted text when it is stored, so relevant passages deep in a long plan
+    are found, not just its opening pages. Numbers are stable, so citations can name them.
+    """
+    blocks = passages(document["extractedText"], None) if document.get("extractedText") else document.get("passages", [])
+    if not blocks:
+        return []
+    stems = sorted({re.escape(t.lower()) for t in terms if t.strip()}, key=len, reverse=True)
+    pattern = re.compile(r"\b(?:" + "|".join(stems) + r")", re.I) if stems else None
+    hits = [len(pattern.findall(b["text"])) if pattern else 0 for b in blocks]
+    ranked = sorted(range(len(blocks)), key=lambda i: (-hits[i], i))[:limit]
+    # No passage mentions the theme: fall back to the opening passages rather than random ones.
+    keep = sorted(i for i in ranked if hits[i]) or list(range(min(limit, len(blocks))))
+    return [(i + 1, blocks[i]["text"]) for i in keep]

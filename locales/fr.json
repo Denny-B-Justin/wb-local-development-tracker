@@ -508,7 +508,7 @@
   },
   "blocked": {
    "chooseUnit": "Choisissez une unité pour la note.",
-   "noKey": "La génération par IA n'est pas configurée sur ce site (pas de clé OpenAI). Les notes mises en cache restent affichées.",
+   "noKey": "La génération par IA n'est pas configurée sur ce site (la passerelle mAI n'est pas paramétrée, ou l'application ne tourne pas sur Posit Connect). Les notes mises en cache restent affichées.",
    "off": "La génération est désactivée sur ce site. Les notes mises en cache restent affichées.",
    "noOutputs": "Choisissez au moins une sortie."
   },

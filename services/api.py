@@ -12,8 +12,8 @@ import constants
 import countries
 
 from . import catalog, model as model_module, security, state, store
-from .ai import cache as ai_cache
-from .ai import pipeline
+from ai import cache as ai_cache
+from ai import pipeline
 
 
 def _csv_cell(value: str) -> str:

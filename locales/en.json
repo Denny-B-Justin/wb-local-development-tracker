@@ -508,7 +508,7 @@
   },
   "blocked": {
    "chooseUnit": "Choose a unit to brief.",
-   "noKey": "AI generation is not configured on this site (no OpenAI key). Cached briefs still show.",
+   "noKey": "AI generation is not configured on this site (the mAI Gateway is not set up, or the app is not running on Posit Connect). Cached briefs still show.",
    "off": "Generation is turned off on this site. Cached briefs still show.",
    "noOutputs": "Choose at least one output."
   },

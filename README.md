@@ -200,11 +200,15 @@ rsconnect write-manifest dash . --entrypoint app:app --exclude ".env" --exclude 
 rsconnect deploy manifest manifest.json -n ldt --title "Local Development Tracker"
 ```
 
-`manifest.json` in the repo is ready to use (`python-dash`, entrypoint `app:app`, Python 3.11.9); regenerate it with `write-manifest` whenever files change. In Connect → *Vars*, set the `DATABRICKS_*` values, `LDT_REFRESH_TOKEN`, and (optionally) `OPENAI_*`/`EXA_API_KEY`. Connect serves the app under a sub-path and sets Dash's path prefix itself; the app's own links, API calls and asset URLs are relative, so nothing needs configuring. Set *Min processes* to 1 so the warm cache stays hot.
+`manifest.json` in the repo is ready to use (`python-dash`, entrypoint `app:app`, Python 3.11.9); regenerate it with `write-manifest` whenever files change. In Connect → *Vars*, set the `DATABRICKS_*` values, `LDT_REFRESH_TOKEN`, and (optionally, for the planning brief) `MAI_BASE_URL`, `MAI_ENDPOINT` and `MAI_MODEL` (see §11). Leave *Integrations* empty. Connect serves the app under a sub-path and sets Dash's path prefix itself; the app's own links, API calls and asset URLs are relative, so nothing needs configuring. Set *Min processes* to 1 so the warm cache stays hot.
 
 ## 11. Planning brief (optional AI)
 
-The brief reads the unit's plans (from `ldt_plan_document_sources`), extracts text (pypdf), optionally searches the web (Exa), and calls any **OpenAI-compatible** chat-completions endpoint (`OPENAI_BASE_URL`, `OPENAI_MODEL`, `OPENAI_API_KEY`). Results are cached on disk and, when the table exists, in `ldt_ai_stage_cache` so all instances share them. Set `AI_GENERATION_DISABLED=1` to serve cached briefs only. Without keys, the page explains that generation is unavailable.
+All AI code lives in `ai/`. The brief reads the unit's plans (from `ldt_plan_document_sources`), extracts text (pypdf), picks the plan passages relevant to the score theme, optionally searches the web, and calls the **Posit mAI Gateway** through the OpenAI Responses API (`ai/client.py`). It runs on one model, `gpt-6-luna` by default (`MAI_MODEL`; `gpt-5.6-luna` also works). These are the allowed models with web search, which the brief uses by default; `gpt-6-luna` also has file search, needed for document upload. Web search uses the model's own search tool, so there is no separate search key.
+
+mAI needs no API key: requests carry `X-Posit-App-Id` from `CONNECT_CONTENT_GUID` (set by Posit Connect) and are accepted only from apps running on Connect, so generation is unavailable locally (cached briefs still show). Set `MAI_BASE_URL` and `MAI_ENDPOINT` for QA or Production as listed in `.env.sample`.
+
+Results are cached on disk and, when the table exists, in `ldt_ai_stage_cache` so all instances share them. Change `AI_PROMPT_VERSION` whenever `ai/prompt.py` changes. Set `AI_GENERATION_DISABLED=1` to serve cached briefs only.
 
 ## 12. Onboarding a new country — Guinea (GIN)
 
