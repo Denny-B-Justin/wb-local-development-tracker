@@ -399,8 +399,6 @@ input:focus, select:focus { outline: none; }
 
 .logo { height: 36px; width: auto; }
 .logo-lg { height: 40px; }
-.suite-logo { flex-shrink: 0; border-radius: var(--radius-control); }
-.suite-img { width: auto; }
 
 .site-frame { display: flex; min-height: 100vh; flex-direction: column; }
 .site-main { flex: 1; }

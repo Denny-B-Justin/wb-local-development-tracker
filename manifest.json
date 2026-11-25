@@ -15,7 +15,7 @@
   },
   "files": {
     ".env.sample": {
-      "checksum": "bc51982ad48e5656499765e6b23f9af0"
+      "checksum": "c06256563aea07635013293bbc2c8aa9"
     },
     ".gitignore": {
       "checksum": "7129c6246eb7c5bd2e7937f79825f464"
@@ -266,9 +266,6 @@
     "assets/img/about/strategy-availability.png": {
       "checksum": "d3a0d7ff04d3428bf36f33f4be0b8b11"
     },
-    "assets/img/brand/gpbp-suite.png": {
-      "checksum": "0b62dce575537a67dcac8ecf4cbb899d"
-    },
     "assets/img/brand/icon.png": {
       "checksum": "43d20917313e5fa59b16541c425af418"
     },
@@ -312,7 +309,7 @@
       "checksum": "eec1758fcfbce50ee80ad6e3de21e92e"
     },
     "assets/styles.css": {
-      "checksum": "ebf5e73ab2af79cd67dedcc21a5f0e92"
+      "checksum": "dde0b821be6e4d4387bf2c570b5bad70"
     },
     "assets/vendor/maplibre/LICENSE.txt": {
       "checksum": "c73ffe791f71e9dbcf26aeff3d6269ac"
@@ -330,7 +327,7 @@
       "checksum": "1f85bc4bf231faf5ebd8ab8e9f99f7ce"
     },
     "constants.py": {
-      "checksum": "dc4a88cf1903f80aa2efc1fdbac0ee09"
+      "checksum": "346d15e4db1a2886baa6dd5720275f62"
     },
     "countries/__init__.py": {
       "checksum": "51cc928cfe6d8ac2f6d3f2a545910b09"
@@ -381,10 +378,10 @@
       "checksum": "1ef4dcbaab774d91a064fa2c3d8a6b4b"
     },
     "locales/en.json": {
-      "checksum": "9469ce15e9d118026fad52e164e61d27"
+      "checksum": "192e6e76ad825d6c5221ed14c6538c79"
     },
     "locales/fr.json": {
-      "checksum": "e152f803aaab8f15d4ccaef77df4d529"
+      "checksum": "7ad4e40dcccd4a3bf0e80d91afa55db2"
     },
     "pages/__init__.py": {
       "checksum": "d41d8cd98f00b204e9800998ecf8427e"
@@ -498,7 +495,7 @@
       "checksum": "b2f81f34db01638a969d0b7b30bd4bab"
     },
     "utils/shell.py": {
-      "checksum": "2e7ad1ff68be2ac1ac777f341fd69ca8"
+      "checksum": "edc35542c59a0e12cc70da0b160870a7"
     }
   }
 }

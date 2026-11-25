@@ -31,7 +31,6 @@ def _env_bool(name: str, default: bool = False) -> bool:
 APP_NAME = "Local Development Tracker"
 APP_SHORT_NAME = "LDT"
 APP_VERSION = "2.0.0"
-SUITE_URL = "https://www.pim-pam.net/digital-tools"
 
 ENVIRONMENT = _env("LDT_ENV", "production").lower()
 DEBUG = _env_bool("DASH_DEBUG", False) and ENVIRONMENT == "development"

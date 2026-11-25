@@ -24,14 +24,6 @@ def logo(cls: str = "") -> html.Img:
     return html.Img(src="assets/img/brand/ldt.svg", alt=constants.APP_NAME, className=cx("logo", cls), width=88, height=36)
 
 
-def suite_logo(req: Request, height: int = 32, cls: str = "") -> html.A:
-    return html.A(
-        html.Img(src="assets/img/brand/gpbp-suite.png", alt="", style={"height": f"{height}px"}, className="suite-img"),
-        href=constants.SUITE_URL, target="_blank", rel="noopener noreferrer", className=cx("suite-logo", cls),
-        **{"aria-label": f"{req.t.t('site.suite')} {req.t.t('common.opensInNewTab')}"},
-    )
-
-
 def language_switcher(req: Request) -> html.Details:
     t = req.t
     items = [menu_label(t.t("language.label"))]
@@ -85,7 +77,6 @@ def site_header(req: Request) -> html.Header:
             html.Span(className="flex-1"),
             site_nav(req),
             language_switcher(req),
-            suite_logo(req, cls="hide-sm"),
         ],
         className="site-header",
     )
@@ -95,7 +86,7 @@ def site_footer(req: Request) -> html.Footer:
     t = req.t
     return html.Footer(
         [
-            html.Div([html.Div([logo("self-start"), html.P(t.t("site.footerTagline"))], className="footer-brand"), suite_logo(req, 48)], className="footer-top"),
+            html.Div([html.Div([logo("self-start"), html.P(t.t("site.footerTagline"))], className="footer-brand")], className="footer-top"),
             html.Nav([link(t.t(key), req.site_href(page), "footer-link") for page, key in SITE_LINKS], className="footer-nav", **{"aria-label": t.t("nav.footer")}),
             html.P(t.t("site.copyright", year=str(date.today().year)), className="footer-copy"),
         ],
@@ -131,7 +122,6 @@ def top_bar(req: Request) -> html.Header:
             html.Span(className="flex-1"),
             site_nav(req, "site-nav"),
             language_switcher(req),
-            suite_logo(req, cls="hide-sm"),
         ],
         className="top-bar",
     )
