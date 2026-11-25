@@ -1133,7 +1133,8 @@
    "NPL": "Nepal",
    "SRB": "Serbia",
    "ZMB": "Zambia",
-   "VNM": "Vietnam"
+   "VNM": "Vietnam",
+   "GIN": "Guinea"
   },
   "levels": {
    "province": {
@@ -1151,6 +1152,10 @@
    "commune": {
     "one": "Commune",
     "other": "Communes"
+   },
+   "region": {
+    "one": "Region",
+    "other": "Regions"
    }
   },
   "pillars": {

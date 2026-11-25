@@ -21,7 +21,7 @@
       "checksum": "7129c6246eb7c5bd2e7937f79825f464"
     },
     "README.md": {
-      "checksum": "9b205d8c0a6ac1087d80bfb108e3b733"
+      "checksum": "c0e319fb67398e4100e8df02c5944ae6"
     },
     "ai/__init__.py": {
       "checksum": "b27acb634af80ff31e4fd236e73aca41"
@@ -45,7 +45,7 @@
       "checksum": "49a7980ec223b04777d5d91a1a2d63b4"
     },
     "ai/prompt.py": {
-      "checksum": "68cb6d10e62c5f4678e9aae59431bc5b"
+      "checksum": "94340cb5b3c7e5a0c84009d1bad3cf3c"
     },
     "app.py": {
       "checksum": "9fe1cc62d18cde604c9cd10689b969aa"
@@ -115,6 +115,9 @@
     },
     "assets/fonts/inter-vietnamese-700-normal.woff2": {
       "checksum": "f7cdc3c0c4df70995db27105e574c4b8"
+    },
+    "assets/geo/context/guinea.json": {
+      "checksum": "3456f5f8747ab6d4a812bc4549e69c6c"
     },
     "assets/geo/context/nepal.json": {
       "checksum": "14be97288a860bfffdc538d8578323a5"
@@ -327,10 +330,13 @@
       "checksum": "1f85bc4bf231faf5ebd8ab8e9f99f7ce"
     },
     "constants.py": {
-      "checksum": "346d15e4db1a2886baa6dd5720275f62"
+      "checksum": "9d376f88a39879cb527b8fa5c93acde5"
     },
     "countries/__init__.py": {
-      "checksum": "51cc928cfe6d8ac2f6d3f2a545910b09"
+      "checksum": "6c3a9437ff27a7c91c1811896985fde3"
+    },
+    "countries/gin.py": {
+      "checksum": "abb0a25c5e0e9f1022ccafd35226baef"
     },
     "countries/npl.py": {
       "checksum": "787c91687fe33b66017a28665d8c3289"
@@ -347,6 +353,9 @@
     "countries/zmb.py": {
       "checksum": "b00485a2c75a54a6d2e6dfa4ca862eb0"
     },
+    "data_snapshot/country_GIN.json.gz": {
+      "checksum": "42e1837dcc979781232ba99697799bfa"
+    },
     "data_snapshot/country_NPL.json.gz": {
       "checksum": "c361de65a6f5e893ef33672031fc64a9"
     },
@@ -358,6 +367,9 @@
     },
     "data_snapshot/country_ZMB.json.gz": {
       "checksum": "48abfaa849260f695a486a39767a08c3"
+    },
+    "data_snapshot/geometry_GIN.json.gz": {
+      "checksum": "a209c3f9f924da6412b0ddaa911f7581"
     },
     "data_snapshot/geometry_NPL.json.gz": {
       "checksum": "051b417350eadd2a72181245c836f60f"
@@ -378,10 +390,10 @@
       "checksum": "1ef4dcbaab774d91a064fa2c3d8a6b4b"
     },
     "locales/en.json": {
-      "checksum": "192e6e76ad825d6c5221ed14c6538c79"
+      "checksum": "c2d6d4b06c77b2737e4f7f8acb6babc7"
     },
     "locales/fr.json": {
-      "checksum": "7ad4e40dcccd4a3bf0e80d91afa55db2"
+      "checksum": "728270ab7b403571779ad068fb264d0b"
     },
     "pages/__init__.py": {
       "checksum": "d41d8cd98f00b204e9800998ecf8427e"

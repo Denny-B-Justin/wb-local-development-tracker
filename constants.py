@@ -78,6 +78,11 @@ UC_COUNTRY_TABLES: dict[str, dict[str, str]] = {
         "scores": _env("LDT_VNM_SCORES_TABLE", "ldt_scores_vietnam"),
         "boundaries": _env("LDT_VNM_BOUNDARIES_TABLE", "ldt_boundaries_admin2_vietnam"),
     },
+    "GIN": {
+        "indicators": _env("LDT_GIN_INDICATORS_TABLE", "ldt_indicators_guinea"),
+        "scores": _env("LDT_GIN_SCORES_TABLE", "ldt_scores_guinea"),
+        "boundaries": _env("LDT_GIN_BOUNDARIES_TABLE", "ldt_boundaries_admin2_guinea"),
+    },
 }
 
 # Shared (all-country) tables. Each is optional: a missing table means the

@@ -4,7 +4,7 @@ The **Local Development Tracker (LDT)** as a Python 3.11.9 Dash app: the pim-pam
 
 - Public site: Home, Why LDT, Methodology, Resources, Release notes, About.
 - Country workspace: Map, Compare, Local units, Unit profile, Planning brief (AI), Data & trust, Strategy inventory.
-- Countries: Nepal, Serbia, Zambia, Vietnam (see §8 for what is different about Vietnam). English and French.
+- Countries: Nepal, Serbia, Zambia, Vietnam, Guinea (see §8 for what is different about Vietnam, §12 for Guinea). English and French.
 
 ---
 
@@ -17,7 +17,7 @@ cp .env.sample .env            # fill in the DATABRICKS_* values
 LDT_ENV=development python app.py   # http://127.0.0.1:8050/?page=home
 ```
 
-Without Databricks credentials the app still runs from `data_snapshot/` (Nepal, Serbia and Zambia, built from the ldt-demo bundles). Vietnam shows its empty state until its UC tables are read once.
+Without Databricks credentials the app still runs from `data_snapshot/` (Nepal, Serbia and Zambia from the ldt-demo bundles; Vietnam and Guinea from their Unity Catalog tables).
 
 ## 2. URLs
 
@@ -101,11 +101,11 @@ python scripts/build_snapshot.py --from-legacy <ldt-demo>/assets/data   # offlin
 
 ### Current tables (read today)
 
-| Role | Nepal | Serbia | Zambia | Vietnam |
-| --- | --- | --- | --- | --- |
-| indicators | `ldt_gpbp_ldt_npl_admin_2_demo` | `ldt_gpbp_ldt_srb_admin_2_demo` | `ldt_gpbp_ldt_zmb_admin_2_demo` | `ldt_indicators_vietnam` |
-| scores | `ldt_gpbp_ldt_npl_scores_admin_2_demo` | `ldt_gpbp_ldt_srb_scores_admin_2_demo` | `ldt_gpbp_ldt_zmb_scores_admin_2_demo` | `ldt_scores_vietnam` |
-| boundaries | `ldt_boundaries_admin2_nepal` | `ldt_boundaries_admin2_serbia` | `ldt_boundaries_admin2_zambia` | `ldt_boundaries_admin2_vietnam` |
+| Role | Nepal | Serbia | Zambia | Vietnam | Guinea |
+| --- | --- | --- | --- | --- | --- |
+| indicators | `ldt_gpbp_ldt_npl_admin_2_demo` | `ldt_gpbp_ldt_srb_admin_2_demo` | `ldt_gpbp_ldt_zmb_admin_2_demo` | `ldt_indicators_vietnam` | `ldt_indicators_guinea` |
+| scores | `ldt_gpbp_ldt_npl_scores_admin_2_demo` | `ldt_gpbp_ldt_srb_scores_admin_2_demo` | `ldt_gpbp_ldt_zmb_scores_admin_2_demo` | `ldt_scores_vietnam` | `ldt_scores_guinea` |
+| boundaries | `ldt_boundaries_admin2_nepal` | `ldt_boundaries_admin2_serbia` | `ldt_boundaries_admin2_zambia` | `ldt_boundaries_admin2_vietnam` | `ldt_boundaries_admin2_guinea` |
 
 Shared (all optional — a missing table only empties that feature): `ldt_plan_document_sources`, `ldt_strategy_inventory_documents`, `ldt_ai_stage_cache`.
 
@@ -210,81 +210,32 @@ mAI needs no API key: requests carry `X-Posit-App-Id` from `CONNECT_CONTENT_GUID
 
 Results are cached on disk and, when the table exists, in `ldt_ai_stage_cache` so all instances share them. Change `AI_PROMPT_VERSION` whenever `ai/prompt.py` changes. Set `AI_GENERATION_DISABLED=1` to serve cached briefs only.
 
-## 12. Onboarding a new country — Guinea (GIN)
+## 12. Onboarding a new country (worked example: Guinea, GIN)
 
-Guinea: 8 regions (admin-1, incl. Conakry) → 33 prefectures + Conakry's communes (admin-2 local units). Two levels, French names with accents and apostrophes (N'Zérékoré).
+Guinea is onboarded: 8 regions (admin-1, incl. Conakry) → 342 communes (rural communes and urban communes, `CU …`), two levels, French names with accents and apostrophes (N'Zérékoré). It comes from the same pipeline as Vietnam, so the steps below use its real values.
 
-**1. Load the data into Unity Catalog** with the recommended names (§6, DDL in `scripts/uc_tables.sql`):
-`ldt_gin_admin2_indicators`, `ldt_gin_admin2_scores`, `ldt_gin_admin2_boundaries`. Region and prefecture names must be spelled identically in all three. Add Guinea's plans to `ldt_plan_document_sources` with `country_code='GIN'` (and inventory rows if any).
+**1. Check the tables in Unity Catalog.** The Vietnam/Guinea pipeline writes `ldt_indicators_<country>`, `ldt_scores_<country>` and `ldt_boundaries_admin2_<country>` (country name in lowercase). Guinea's tables:
 
-**2. Register the tables** in `constants.py`:
+| Table | Rows | Columns that matter |
+| --- | --- | --- |
+| `ldt_indicators_guinea` | 342 per year, 2021–2025 | `NAM_1`, `NAM_2`, `year`, `population`, `total_land_area_km2`, snake_case measures |
+| `ldt_scores_guinea` | 342 per year, 2021–2025 | `NAM_1`, `NAM_2`, `year`, `*_score` (no flood scores), `infrastructure_score`, `livability_score`, `prosperity_score` |
+| `ldt_boundaries_admin2_guinea` | 342 | `NAM_1`, `NAM_2`, `geometry_wkb` (EPSG:4326) |
 
-```python
-    "GIN": {
-        "indicators": _env("LDT_GIN_INDICATORS_TABLE", "ldt_gin_admin2_indicators"),
-        "scores": _env("LDT_GIN_SCORES_TABLE", "ldt_gin_admin2_scores"),
-        "boundaries": _env("LDT_GIN_BOUNDARIES_TABLE", "ldt_gin_admin2_boundaries"),
-    },
-```
+Names must be spelled identically in all three. Unlike Vietnam (`Province`, `Municipality`), Guinea's score and indicator tables use `NAM_1`/`NAM_2`. Do not use `ldt_boundaries_guinea` (38 prefecture polygons, unaccented names) for the local level.
+
+**2. Register the tables** in `constants.py` (`UC_COUNTRY_TABLES["GIN"]`, each overridable with `LDT_GIN_*_TABLE`).
 
 **3. Describe the country** in `countries/gin.py`:
-
-```python
-from .schema import Country, Features, Level, Plan, Release, Source
-
-COUNTRY = Country(
-    iso3="GIN",
-    slug="guinea",
-    name="Guinea",
-    status="preview",
-    release=Release(prefix="gin", version="v1", pil_version="1.5", years=(2021, 2022, 2023, 2024, 2025), default_year=2025),
-    levels=(
-        Level("region", "province", "Region", "Regions"),
-        Level("prefecture", "municipality", "Prefecture", "Prefectures"),
-    ),
-    national_plan=Plan("Simandou 2040", "https://<official plan URL>"),
-    plan_source_level="local",
-    ai_message="Local planning documents are available for AI-assisted analysis where source links are loaded.",
-    landing_meta="Prefectures & communes",
-    features=Features(ai=True, plan_sources=True),
-    source=Source(
-        hierarchy={"province": "Province", "district": "Province", "municipality": "Municipality"},
-        boundary_candidates={
-            "municipality": ("NAM_2", "ADM2_FR", "ADM2_EN", "Municipality", "shapeName"),
-            "district": ("NAM_1", "ADM1_FR", "ADM1_EN", "Province"),
-            "province": ("NAM_1", "ADM1_FR", "ADM1_EN", "Province"),
-        },
-        documents_subdir="Guinea",
-    ),
-)
-```
-
-- `hierarchy` maps the app's three roles to the score/indicator column names (with two levels, `district` repeats the admin-1 column). If the tables use other spellings (`region`, `prefecture`, `annee`), put those names here and in `year_candidates`/`column_aliases`.
-- Level keys (`region`, `prefecture`) become URL parameters (`&region=kindia`) and must not clash with reserved parameters.
+- `hierarchy={"province": "NAM_1", "district": "NAM_1", "municipality": "NAM_2"}`: the score/indicator column for each of the app's three roles; with two levels, `district` repeats the admin-1 column.
+- `levels`: `Level("region", "province", …)` and `Level("commune", "municipality", …)`. Level keys become URL parameters (`&region=conakry`) and must not clash with reserved ones.
+- `column_aliases` is only needed when population or land area use another spelling (Vietnam: `land_area_km2`); Guinea's `population` and `total_land_area_km2` are matched by default. Score columns match regardless of case and punctuation (`broadband_internet_score` = "Broadband Internet Score"; `emissions_normalized_score` = Emissions per Area).
+- `national_plan` is optional and left unset until an official plan link is confirmed.
 - `validate()` runs at import and refuses an inconsistent entry with a readable message.
 
-**4. Add it to the registry** in `countries/__init__.py` (tuple order = display order):
+**4. Add it to the registry** in `countries/__init__.py` (tuple order = display order).
 
-```python
-from . import gin, npl, srb, vnm, zmb
-REGISTRY = tuple(module.COUNTRY.validate() for module in (npl, srb, zmb, vnm, gin))
-```
-
-**5. Translations** in `locales/en.json` and `locales/fr.json` (French matters for Guinea):
-
-```jsonc
-"data": {
-  "countries": { "GIN": "Guinea" },              // fr: "Guinée"
-  "levels": {
-    "region":     { "one": "Region",     "other": "Regions" },      // fr: "Région" / "Régions"
-    "prefecture": { "one": "Prefecture", "other": "Prefectures" }   // fr: "Préfecture" / "Préfectures"
-  },
-  "landingMeta": { "GIN": "Prefectures & communes" },               // fr: "Préfectures et communes"
-  "aiMessage":   { "GIN": "…" }
-}
-```
-
-Missing keys fall back to the English strings in the country module.
+**5. Translations** in `locales/en.json` and `locales/fr.json`: `data.countries.GIN`, `data.levels.region`, `data.landingMeta.GIN`, `data.aiMessage.GIN`. Missing keys fall back to the English strings in the country module.
 
 **6. Map surroundings** (neighbours and sea, drawn offline):
 
@@ -296,11 +247,11 @@ python scripts/build_map_context.py /tmp/ne10.geojson --only GIN    # writes ass
 **7. Validate and build**:
 
 ```bash
-python scripts/check_country.py GIN      # columns, years, units, boundary matches
-python scripts/build_snapshot.py         # adds country_GIN / geometry_GIN to data_snapshot/
+python scripts/check_country.py GIN      # columns, years, units, boundary matches (Guinea: 342 of 342)
+python scripts/build_snapshot.py         # writes country_GIN / geometry_GIN to data_snapshot/
 ```
 
-**8. Preview, then publish.** With `status="preview"` Guinea is hidden from everyone except reviewers who open `/api/preview?token=<LDT_PREVIEW_TOKEN>` once (sets a cookie). Review the map, Data & trust (coverage and boundary gaps) and a few profiles in English and French. Then set `status="published"`, optionally add a release-notes entry in `pages/pages_constants.py`, regenerate `manifest.json`, and redeploy. `status="draft"` keeps a country fully hidden while its tables are loading.
+**8. Publish.** `status="preview"` hides a country from everyone except reviewers who open `/api/preview?token=<LDT_PREVIEW_TOKEN>` once (sets a cookie); `status="draft"` hides it fully while tables load. Guinea is `published`. Regenerate `manifest.json` and redeploy.
 
 ## 13. Adding a language
 

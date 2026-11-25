@@ -86,7 +86,8 @@ def _score_block(title: str, points: list[dict[str, Any]], context: dict[str, An
         lines.append(f"  Measures: {description}")
     latest = next((p for p in reversed(points) if p.get("municipalityValue") is not None), None)
     if latest is None:
-        return "\n".join([*lines, "  No score for this unit in the release."])
+        measured = any(p.get("nationalAverage") is not None for p in points)
+        return "\n".join([*lines, "  No score for this unit in the release." if measured else f"  Not measured for {context['country']['name']} in this release."])
     to_area, to_nation = _diff(latest["municipalityValue"], latest["provinceAverage"]), _diff(latest["municipalityValue"], latest["nationalAverage"])
     rank_text = f" | national rank {rank['rank']} of {rank['of']} (1 = highest)" if rank else ""
     lines += [
