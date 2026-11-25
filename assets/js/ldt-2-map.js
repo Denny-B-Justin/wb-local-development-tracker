@@ -30,7 +30,8 @@
 
   function loadGeometry(iso3) {
     if (!geometryCache[iso3]) {
-      geometryCache[iso3] = fetch("api/geometry/" + encodeURIComponent(iso3), { credentials: "same-origin" }).then(function (response) {
+      // cache: "no-cache" revalidates by ETag, so a copy cached under an older, longer max-age is never reused.
+      geometryCache[iso3] = fetch("api/geometry/" + encodeURIComponent(iso3), { credentials: "same-origin", cache: "no-cache" }).then(function (response) {
         if (!response.ok) throw new Error("geometry " + response.status);
         return response.json();
       });

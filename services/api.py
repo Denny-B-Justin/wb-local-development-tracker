@@ -113,7 +113,7 @@ def register(server: Flask) -> None:
         etag = hashlib.sha1(f"{country.iso3}{mtime}{len(data)}".encode()).hexdigest()
         if request.headers.get("If-None-Match") == etag:
             return Response(status=304)
-        return Response(data, mimetype="application/json", headers={"Content-Encoding": "gzip", "ETag": etag, "Cache-Control": "public, max-age=3600", "Vary": "Accept-Encoding"})
+        return Response(data, mimetype="application/json", headers={"Content-Encoding": "gzip", "ETag": etag, "Cache-Control": "no-cache", "Vary": "Accept-Encoding"})
 
     @server.get("/api/export/units.csv")
     def export_units():

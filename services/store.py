@@ -77,7 +77,8 @@ def _cached(name: str) -> Any:
         if path.is_file():
             current = path.stat().st_mtime
             break
-    if hit and current is not None and hit[0] >= current:
+    # Exact match: a deleted cache file falls back to an older snapshot, which must not keep the stale memo.
+    if hit and current is not None and hit[0] == current:
         return hit[1]
     loaded = _read(name)
     if loaded is None:
@@ -113,6 +114,30 @@ def write_country(iso3: str, payload: dict[str, Any], geometry: dict[str, Any], 
     _write(_name("geometry", iso3), geometry, directory)
 
 
+def _keep_boundaries(iso3: str, payload: dict[str, Any], geometry: dict[str, Any]) -> dict[str, Any]:
+    """Never let a rebuild with fewer matched boundaries replace a better artifact.
+
+    Unit ids are derived from names, so features from the previous artifact still join
+    to the fresh scores; only those whose unit is still present are carried over.
+    """
+    ids = {u["id"] for u in payload["units"]}
+    kept: list[dict[str, Any]] = []
+    for path in _candidates(_name("geometry", iso3)):
+        try:
+            features = json.loads(gzip.decompress(path.read_bytes())).get("features", []) if path.is_file() else []
+        except (OSError, ValueError) as exc:
+            log.warning("Unreadable artifact %s: %s", path, exc)
+            continue
+        matching = [f for f in features if f["properties"]["id"] in ids]
+        if len(matching) > len(kept):
+            kept = matching
+    if len(kept) <= len(geometry["features"]):
+        return geometry
+    log.warning("%s: rebuild matched %d boundaries; keeping %d from the previous artifact", iso3, len(geometry["features"]), len(kept))
+    payload["mapped"] = sorted(f["properties"]["id"] for f in kept)
+    return {"type": "FeatureCollection", "features": kept}
+
+
 def write_shared(plan_payload: dict[str, Any], inventory_payload: dict[str, Any], directory: Path | None = None) -> None:
     _write(_name("plans"), plan_payload, directory)
     _write(_name("inventory"), inventory_payload, directory)
@@ -133,6 +158,7 @@ def warm(force: bool = False, directory: Path | None = None) -> dict[str, Any]:
                 continue
             try:
                 payload, geometry = assemble.from_databricks(country)
+                geometry = _keep_boundaries(country.iso3, payload, geometry)
                 write_country(country.iso3, payload, geometry, directory)
                 built.append(country.iso3)
             except Exception as exc:  # noqa: BLE001
