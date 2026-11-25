@@ -4,7 +4,6 @@
   "short": "LDT",
   "description": "Comparer les conditions de développement locales, analyser les facteurs déterminants des scores au niveau des communes et établir un lien entre les données d'aménagement du territoire et les choix en matière d'investissements publics.",
   "home": "Accueil — Local Development Tracker",
-  "suite": "Fait partie de la suite GPBP",
   "footerTagline": "Données relatives au développement local pour étayer les décisions d'investissement public.",
   "copyright": "© {year} Local Development Tracker"
  },
@@ -508,7 +507,7 @@
   },
   "blocked": {
    "chooseUnit": "Choisissez une unité pour la note.",
-   "noKey": "La génération par IA n'est pas configurée sur ce site (pas de clé OpenAI). Les notes mises en cache restent affichées.",
+   "noKey": "La génération par IA n'est pas configurée sur ce site (la passerelle mAI n'est pas paramétrée, ou l'application ne tourne pas sur Posit Connect). Les notes mises en cache restent affichées.",
    "off": "La génération est désactivée sur ce site. Les notes mises en cache restent affichées.",
    "noOutputs": "Choisissez au moins une sortie."
   },
@@ -1134,7 +1133,8 @@
    "NPL": "Népal",
    "SRB": "Serbie",
    "ZMB": "Zambie",
-   "VNM": "Viêt Nam"
+   "VNM": "Viêt Nam",
+   "GIN": "Guinée"
   },
   "levels": {
    "province": {
@@ -1152,6 +1152,10 @@
    "commune": {
     "one": "Commune",
     "other": "Communes"
+   },
+   "region": {
+    "one": "Région",
+    "other": "Régions"
    }
   },
   "pillars": {
@@ -1164,13 +1168,15 @@
    "NPL": "Les documents de planification sont disponibles pour une analyse assistée par l'IA.",
    "SRB": "Les documents de planification locaux/SNG sont disponibles pour une analyse assistée par IA lorsque les liens vers les sources sont chargés.",
    "ZMB": "Les documents de planification locaux/SNG sont disponibles pour une analyse assistée par IA lorsque les liens vers les sources sont chargés.",
-   "VNM": "Les documents de planification sont disponibles pour une analyse assistée par l'IA."
+   "VNM": "Les documents de planification sont disponibles pour une analyse assistée par l'IA.",
+   "GIN": "Les documents de planification sont disponibles pour une analyse assistée par IA lorsque les liens vers les sources sont chargés."
   },
   "landingMeta": {
    "NPL": "{units} communes",
    "SRB": "Communes et villes",
    "ZMB": "Districts",
-   "VNM": "{units} communes et quartiers"
+   "VNM": "{units} communes et quartiers",
+   "GIN": "{units} communes"
   },
   "indicators": {
    "accessibility_to_hospitals_score": "Accessibilité aux hôpitaux",

@@ -6,8 +6,8 @@ from typing import Any
 from dash import dcc, html
 
 from services import security, state
-from services.ai import parse as ai_parse
-from services.ai import pipeline
+from ai import parse as ai_parse
+from ai import pipeline
 from services.state import Request
 from utils.components import badge, button, card, card_label, card_title, cx, icon, link, page_header, rich, widget
 
@@ -167,7 +167,7 @@ def output(req: Request, run: dict[str, Any] | None = None) -> list[Any]:
             results[stage] = pipeline.failure(stage, message[:400])
     planned = [s for s in (run.get("planned") or []) if s in pipeline.STAGES]
     running = run.get("running") if run.get("running") in pipeline.STAGES else None
-    default_stages = pipeline.plan_stages(list(BRIEF_OUTPUTS), pipeline.availability()["exa"], context["localPlanAvailable"])
+    default_stages = pipeline.plan_stages(list(BRIEF_OUTPUTS), pipeline.availability()["web"], context["localPlanAvailable"])
     stages = planned or default_stages
     has = lambda s: (results.get(s) or {}).get("status") == "completed"  # noqa: E731
     failed = lambda s: results.get(s) if (results.get(s) or {}).get("status") == "failed" else None  # noqa: E731
@@ -228,7 +228,7 @@ def render(req: Request) -> dict:
     plan_label = None
     if row and context:
         plan_label = t.t("brief.planLabel.top" if req.country.plan_source_level == "top" else "brief.planLabel.local", name=context["localPlanUnitName"])
-    blocked = (t.t("brief.blocked.chooseUnit") if not row else t.t("brief.blocked.noKey") if not available["openAi"]
+    blocked = (t.t("brief.blocked.chooseUnit") if not row else t.t("brief.blocked.noKey") if not available["ai"]
                else t.t("brief.blocked.off") if not available["enabled"] else None)
     themes = []
     for key in SCORE_THEMES:
@@ -260,7 +260,7 @@ def render(req: Request) -> dict:
             _check_row(t.t("brief.scores"), t.t("brief.alwaysUsed"), True, True),
             _check_row(plan_label or t.t("brief.localPlan"), t.t("brief.noPlan") if row and not local_plan else t.t("brief.usedBy"), local_plan, True, key="evidence:local"),
             _check_row(req.country.national_plan.title if req.country.national_plan else t.t("brief.nationalPlan"), t.t("brief.usedBy"), True, True, key="evidence:national"),
-            _check_row(t.t("brief.webSearch"), t.t("brief.webSearchHint") if available["exa"] else t.t("brief.notConfigured"), available["exa"], not available["exa"], key="web"),
+            _check_row(t.t("brief.webSearch"), t.t("brief.webSearchHint") if available["web"] else t.t("brief.notConfigured"), available["web"], not available["web"], key="web"),
             _check_row(t.t("brief.upload"), t.t("brief.comingSoon"), False, True),
         ], className="stack gap-2"),
         html.Section([card_label(t.t("brief.outputsLabel")), *outputs], className="stack gap-2"),
@@ -274,7 +274,7 @@ def render(req: Request) -> dict:
         readiness_row,
     ], "brief-setup print-hidden", tag=html.Section)
     config = {
-        "blocked": blocked, "web": available["exa"], "localPlan": local_plan, "scope": f"{row['id'] if row else ''}:{theme}:{req.year}",
+        "blocked": blocked, "web": available["web"], "localPlan": local_plan, "scope": f"{row['id'] if row else ''}:{theme}:{req.year}",
         "text": {"generate": t.t("brief.generate"), "regenerate": t.t("brief.regenerate"), "generating": t.t("brief.generating"), "noOutputs": t.t("brief.blocked.noOutputs"),
                  "needsPlan": t.t("brief.needsPlan"), "implied": t.t("brief.impliedOutput"), "usedBy": t.t("brief.usedBy"), "noPlan": t.t("brief.noPlan"),
                  "chooseOutputs": t.t("brief.chooseOutputs")},

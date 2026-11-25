@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import time
 from datetime import datetime, timezone
 from typing import Any
 
@@ -12,7 +13,7 @@ from services import catalog
 from services.model import CountryModel
 from services.security import RateLimiter
 
-from . import cache, clients, prompts
+from . import cache, client, documents, models, prompt
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +33,8 @@ visitor_limiter = RateLimiter(constants.AI_VISITOR_HOURLY_LIMIT, 3600)
 
 
 def availability() -> dict[str, bool]:
-    return {"openAi": bool(constants.OPENAI_API_KEY), "exa": bool(constants.EXA_API_KEY), "enabled": not constants.AI_GENERATION_DISABLED}
+    ready = client.configured()
+    return {"ai": ready, "web": ready and models.supports("web_search"), "enabled": not constants.AI_GENERATION_DISABLED}
 
 
 def expand_outputs(outputs: list[str], local_plan: bool) -> list[str]:
@@ -74,24 +76,41 @@ def _average(values: list[float | None]) -> float | None:
     return round(sum(finite) / len(finite), 2) if finite else None
 
 
-def indicator_series(data: CountryModel, unit_id: str, theme: str) -> list[dict[str, Any]]:
-    years = data.years
-    tables = {year: data.scores(year) for year in years}
-    members = [u for u in data.units if all(u["id"] in tables[y] for y in years)]
+def _peers(data: CountryModel, unit_id: str) -> tuple[dict[int, dict], list[dict], list[dict]]:
+    tables = {year: data.scores(year) for year in data.years}
+    members = [u for u in data.units if all(u["id"] in tables[y] for y in data.years)]
     me = data.unit_index[unit_id]
-    same_area = [u for u in members if u["names"]["province"] == me["names"]["province"]]
+    return tables, members, [u for u in members if u["names"]["province"] == me["names"]["province"]]
+
+
+def _points(data: CountryModel, unit_id: str, index: int) -> list[dict[str, Any]]:
+    """Per year: the unit's value at score-row ``index`` and its area and national averages."""
+    tables, members, same_area = _peers(data, unit_id)
+    points = []
+    for year in data.years:
+        table = tables[year]
+        value = lambda uid: (table.get(uid) or [None] * (index + 1))[index]  # noqa: E731
+        points.append({"year": year, "municipalityValue": value(unit_id), "provinceAverage": _average([value(u["id"]) for u in same_area]),
+                       "nationalAverage": _average([value(u["id"]) for u in members])})
+    return points
+
+
+def indicator_series(data: CountryModel, unit_id: str, theme: str) -> list[dict[str, Any]]:
     out = []
     for component in catalog.components_of(theme):
-        index = 4 + catalog.COMPONENT_INDEX[component.id]
-        points = []
-        for year in years:
-            table = tables[year]
-            value = lambda uid: (table.get(uid) or [None] * (index + 1))[index]  # noqa: E731
-            points.append({"year": year, "municipalityValue": value(unit_id), "provinceAverage": _average([value(u["id"]) for u in same_area]),
-                           "nationalAverage": _average([value(u["id"]) for u in members])})
+        points = _points(data, unit_id, 4 + catalog.COMPONENT_INDEX[component.id])
         out.append({"componentId": component.id, "indicatorId": catalog.COMPONENT_INDICATOR.get(component.id, component.id), "label": component.canonical,
-                    "description": catalog.description_of(component.id), "points": points, "singleYearOnly": len(years) <= 1})
+                    "description": catalog.description_of(component.id), "points": points, "singleYearOnly": len(data.years) <= 1})
     return out
+
+
+def theme_rank(data: CountryModel, unit_id: str, year: int, theme: str) -> dict[str, int] | None:
+    """The unit's national rank on the theme score in ``year`` (1 = highest)."""
+    index = 1 + catalog.PILLARS.index(theme)
+    values = {uid: row[index] for uid, row in data.scores(year).items() if row and row[index] is not None}
+    if unit_id not in values:
+        return None
+    return {"year": year, "rank": 1 + sum(1 for v in values.values() if v > values[unit_id]), "of": len(values)}
 
 
 def build_context(data: CountryModel, unit_id: str, year: int, theme: str) -> dict[str, Any]:
@@ -113,6 +132,10 @@ def build_context(data: CountryModel, unit_id: str, year: int, theme: str) -> di
         "year": year,
         "municipality": {"id": row["id"], "key": row["key"], "name": row["name"], "district": row["names"]["district"], "province": row["names"]["province"]},
         "score": {"id": score_id, "label": catalog.SCORE_LABELS[score_id]},
+        "unitLabel": country.local_level.singular,
+        "areaLevelLabel": country.filter_levels[0].singular,
+        "themeSeries": _points(data, unit_id, 1 + catalog.PILLARS.index(theme)),
+        "themeRank": theme_rank(data, unit_id, year, theme),
         "indicatorSeries": indicator_series(data, unit_id, theme),
         "provincePlanCandidates": candidates,
         "nationalPlanSources": national,
@@ -134,7 +157,7 @@ def _result(stage: str, rendered: str | None, structured: dict[str, Any], refs: 
 
 
 def failure(stage: str, message: str) -> dict[str, Any]:
-    return _result(stage, None, {}, [], constants.OPENAI_MODEL, "failed", message, "failed")
+    return _result(stage, None, {}, [], constants.MAI_MODEL, "failed", message, "failed")
 
 
 def load_cached(context: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -148,11 +171,11 @@ def load_cached(context: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
 
 def _document(stage: str, source: dict[str, Any], label: str, area: str | None, country: str) -> dict[str, Any]:
-    data, content_type, final_url = clients.fetch_document(source["link"])
-    text = clients.extract_text(data, content_type)
+    data, content_type, final_url = documents.fetch_document(source["link"])
+    text = documents.extract_text(data, content_type)
     if len(text.strip()) < 200:
         raise RuntimeError("No readable text could be extracted from the plan document.")
-    passages = clients.passages(text)
+    passages = documents.passages(text)
     preview = "\n\n".join(p["text"] for p in passages[:12]) or text[:12000]
     structured = {"countryCode": country, "sourceType": "national_plan" if stage == "national_plan_context" else "province_plan", "title": source["title"],
                   "province": area, "sourceUrlOrPath": final_url, "contentMode": "full_text", "extractedText": text[:200000], "passages": passages,
@@ -182,8 +205,8 @@ def _web_summary(results: dict[str, dict]) -> str | None:
 def _generate(stage: str, context: dict[str, Any], results: dict[str, dict]) -> dict[str, Any]:
     refs_data = [{"label": f"{context['country']['name']} PIL indicator series", "type": "indicator_series", "source": context["releaseKey"]}]
     if stage == "indicator_narrative":
-        text, model = clients.generate(prompts.SYSTEM, prompts.indicator_narrative(context))
-        return _result(stage, text, {"series": len(context["indicatorSeries"])}, refs_data, model)
+        reply = client.generate(prompt.SYSTEM, prompt.indicator_narrative(context))
+        return _result(stage, reply.text, {"series": len(context["indicatorSeries"])}, refs_data, reply.model)
     if stage == "province_plan_context":
         if not context["provincePlanCandidates"]:
             raise RuntimeError(f"No local/SNG plan URL is available for {context['localPlanUnitName']}.")
@@ -193,30 +216,30 @@ def _generate(stage: str, context: dict[str, Any], results: dict[str, dict]) -> 
             raise RuntimeError("No national plan is tracked for this country.")
         return _document(stage, context["nationalPlanSources"][0], f"{context['country']['name']} national plan", None, context["country"]["code"])
     if stage == "web_context_search":
-        if not constants.EXA_API_KEY:
-            return _result(stage, "Web search is not configured on this site.", {"skipped": True}, [], "none", cache_status="failed")
-        hits = clients.exa_search(prompts.web_query(context))
-        if not hits:
-            return _result(stage, "The web search returned no results.", {"skipped": True}, [], "exa")
-        text, model = clients.generate(prompts.SYSTEM, prompts.web_summary(context, hits))
-        refs = [{"label": h["title"], "type": "web_search", "source": h["url"]} for h in hits]
-        return _result(stage, text, {"hits": [{k: h[k] for k in ("title", "url", "publishedDate", "score")} for h in hits]}, refs, model)
+        if not models.supports("web_search"):
+            return _result(stage, "Web search is not available with the configured model.", {"skipped": True}, [], "none", cache_status="failed")
+        reply = client.generate(prompt.SYSTEM, prompt.web_search(context), web_search=True)
+        # Uncited web text cannot be checked, so it never reaches later stages.
+        if reply.text.strip().upper().startswith("NO RELEVANT RESULTS") or not reply.citations:
+            return _result(stage, "The web search found no relevant, citable sources.", {"skipped": True}, [], reply.model)
+        refs = [{"label": c["title"], "type": "web_search", "source": c["url"]} for c in reply.citations]
+        return _result(stage, reply.text, {"hits": reply.citations}, refs, reply.model)
     if stage == "plan_alignment":
         _needs(results, stage, "province_plan_context", "national_plan_context")
-        text, model = clients.generate(prompts.SYSTEM, prompts.plan_alignment(results["province_plan_context"]["structuredOutput"],
-                                                                              results["national_plan_context"]["structuredOutput"], context, _web_summary(results)))
-        return _result(stage, text, {}, [{"label": "Local/SNG plan", "type": "generated", "source": "province_plan_context"},
-                                         {"label": "National plan", "type": "generated", "source": "national_plan_context"}], model)
+        reply = client.generate(prompt.SYSTEM, prompt.plan_alignment(results["province_plan_context"]["structuredOutput"],
+                                                                     results["national_plan_context"]["structuredOutput"], context, _web_summary(results)))
+        return _result(stage, reply.text, {}, [{"label": "Local/SNG plan", "type": "generated", "source": "province_plan_context"},
+                                               {"label": "National plan", "type": "generated", "source": "national_plan_context"}], reply.model)
     if stage == "swot_analysis":
         _needs(results, stage, "indicator_narrative", "province_plan_context", "national_plan_context")
-        text, model = clients.generate(prompts.SYSTEM, prompts.swot(context, results["indicator_narrative"]["renderedOutput"], results["province_plan_context"]["structuredOutput"],
-                                                                    results["national_plan_context"]["structuredOutput"], _web_summary(results)))
-        return _result(stage, text, {}, [{"label": "Indicator narrative", "type": "generated", "source": "indicator_narrative"}], model)
+        reply = client.generate(prompt.SYSTEM, prompt.swot(context, results["indicator_narrative"]["renderedOutput"], results["province_plan_context"]["structuredOutput"],
+                                                           results["national_plan_context"]["structuredOutput"], _web_summary(results)))
+        return _result(stage, reply.text, {}, [{"label": "Indicator narrative", "type": "generated", "source": "indicator_narrative"}], reply.model)
     if stage == "investment_recommendations":
         _needs(results, stage, "indicator_narrative", "plan_alignment", "swot_analysis")
-        text, model = clients.generate(prompts.SYSTEM, prompts.recommendations(context, results["indicator_narrative"]["renderedOutput"], results["plan_alignment"]["renderedOutput"],
-                                                                               results["swot_analysis"]["renderedOutput"], _web_summary(results)))
-        return _result(stage, text, {}, [{"label": "SWOT analysis", "type": "generated", "source": "swot_analysis"}], model)
+        reply = client.generate(prompt.SYSTEM, prompt.recommendations(context, results["indicator_narrative"]["renderedOutput"], results["plan_alignment"]["renderedOutput"],
+                                                                      results["swot_analysis"]["renderedOutput"], _web_summary(results)))
+        return _result(stage, reply.text, {}, [{"label": "SWOT analysis", "type": "generated", "source": "swot_analysis"}], reply.model)
     raise ValueError("Unknown stage")
 
 
@@ -229,17 +252,22 @@ def run_stage(context: dict[str, Any], stage: str, mode: str, visitor: str) -> d
         return failure(stage, "No cached result.")
     if constants.AI_GENERATION_DISABLED:
         return failure(stage, "AI generation is turned off on this site.")
-    if stage not in DOCUMENT_STAGES and stage != "web_context_search" and not constants.OPENAI_API_KEY:
-        return failure(stage, "AI generation is not configured (no API key).")
+    if stage not in DOCUMENT_STAGES and not client.configured():
+        return failure(stage, "AI generation is not configured (mAI Gateway settings missing, or not running on Posit Connect).")
     if stage not in DOCUMENT_STAGES:
         if cache.runs_last_24h() >= constants.AI_DAILY_RUN_LIMIT or not visitor_limiter.hit(visitor):
             return failure(stage, "AI generation limit reached. Try again later.")
+    started = time.time()
+    where = f"{scope['countryCode']} {context['municipality']['name']} {scope['scoreId']} {scope['releaseKey']}"
+    log.info("Brief stage %s started (%s, mode=%s)", stage, where, mode)
     try:
         result = _generate(stage, context, results)
     except Exception as exc:  # noqa: BLE001
-        log.warning("Stage %s failed: %s", stage, exc)
+        log.warning("Brief stage %s FAILED after %.1fs (%s): %s: %s", stage, time.time() - started, where, type(exc).__name__, exc)
         cache.record_run(scope, stage, "failed")
         return failure(stage, str(exc)[:400] or "This stage failed.")
+    log.info("Brief stage %s %s in %.1fs (%s, model=%s, sources=%d)", stage, result["status"], time.time() - started, where,
+             result["modelName"], len(result.get("sourceReferences") or []))
     if mode == "regenerate":
         result["cacheStatus"] = "regenerated"
     if not result.get("structuredOutput", {}).get("skipped") or result["modelName"] != "none":

@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import constants  # noqa: E402
 import countries  # noqa: E402
-from services import assemble, store  # noqa: E402
+from services import assemble, logs, store  # noqa: E402
 
 
 def main() -> int:
@@ -23,7 +23,7 @@ def main() -> int:
     parser.add_argument("--from-legacy", type=Path, help="folder holding <slug>/analytics-data.json and municipalities.geojson")
     parser.add_argument("--out", type=Path, default=constants.SNAPSHOT_DIR)
     args = parser.parse_args()
-    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+    logs.setup()
 
     if args.from_legacy:
         built = []

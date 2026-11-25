@@ -22,15 +22,28 @@ class DatabricksNotConfigured(RuntimeError):
     pass
 
 
+_SETTINGS = ("DATABRICKS_SERVER_HOSTNAME", "DATABRICKS_HTTP_PATH", "DATABRICKS_CLIENT_ID", "DATABRICKS_CLIENT_SECRET")
+_warned_unconfigured = False
+
+
+def missing_settings() -> list[str]:
+    return [name for name in _SETTINGS if not getattr(constants, name)]
+
+
 def configured() -> bool:
-    return all(
-        (
-            constants.DATABRICKS_SERVER_HOSTNAME,
-            constants.DATABRICKS_HTTP_PATH,
-            constants.DATABRICKS_CLIENT_ID,
-            constants.DATABRICKS_CLIENT_SECRET,
-        )
-    )
+    global _warned_unconfigured
+    missing = missing_settings()
+    if missing and not _warned_unconfigured:
+        _warned_unconfigured = True
+        log.warning("Databricks is not configured (missing: %s); the app serves data_snapshot/ and cached artifacts only", ", ".join(missing))
+    return not missing
+
+
+def _describe(statement: str, parameters: dict[str, Any]) -> str:
+    """The statement for logs: one line, with the IDENTIFIER table parameter written out. Never other values."""
+    text = " ".join(statement.split())
+    table = parameters.get("table")
+    return text.replace("IDENTIFIER(:table)", str(table)) if isinstance(table, str) else text
 
 
 def _identifier(part: str) -> str:
@@ -61,13 +74,19 @@ def connection() -> Iterator[Any]:
         raise DatabricksNotConfigured("DATABRICKS_* environment variables are not set")
     from databricks import sql
 
-    conn = sql.connect(
-        server_hostname=constants.DATABRICKS_SERVER_HOSTNAME,
-        http_path=constants.DATABRICKS_HTTP_PATH,
-        credentials_provider=_credentials,
-        _socket_timeout=constants.DATABRICKS_QUERY_TIMEOUT_SECONDS,
-        user_agent_entry="wb-local-development-tracker",
-    )
+    started = time.time()
+    try:
+        conn = sql.connect(
+            server_hostname=constants.DATABRICKS_SERVER_HOSTNAME,
+            http_path=constants.DATABRICKS_HTTP_PATH,
+            credentials_provider=_credentials,
+            _socket_timeout=constants.DATABRICKS_QUERY_TIMEOUT_SECONDS,
+            user_agent_entry="wb-local-development-tracker",
+        )
+    except Exception as exc:
+        log.error("Databricks connection to %s (warehouse %s) failed after %.2fs: %s: %s",
+                  constants.DATABRICKS_SERVER_HOSTNAME, constants.DATABRICKS_HTTP_PATH, time.time() - started, type(exc).__name__, exc)
+        raise
     try:
         yield conn
     finally:
@@ -76,23 +95,39 @@ def connection() -> Iterator[Any]:
 
 def query(statement: str, parameters: dict[str, Any] | None = None) -> pd.DataFrame:
     """Run a parameterized statement (named :markers). Never format values into SQL."""
+    parameters = parameters or {}
+    described = _describe(statement, parameters)
     started = time.time()
-    with connection() as conn, conn.cursor() as cursor:
-        cursor.execute(statement, parameters or {})
-        if cursor.description is None:
-            return pd.DataFrame()
-        try:
-            frame = cursor.fetchall_arrow().to_pandas()
-        except Exception:  # noqa: BLE001 - connector without pyarrow
-            rows = cursor.fetchall()
-            frame = pd.DataFrame(rows, columns=[d[0] for d in cursor.description])
-    log.info("Databricks: %d rows x %d cols in %.2fs", len(frame), len(frame.columns), time.time() - started)
+    log.debug("Databricks query: %s", described)
+    try:
+        with connection() as conn, conn.cursor() as cursor:
+            cursor.execute(statement, parameters)
+            if cursor.description is None:
+                return pd.DataFrame()
+            try:
+                frame = cursor.fetchall_arrow().to_pandas()
+            except Exception:  # noqa: BLE001 - connector without pyarrow
+                rows = cursor.fetchall()
+                frame = pd.DataFrame(rows, columns=[d[0] for d in cursor.description])
+    except DatabricksNotConfigured:
+        raise
+    except Exception as exc:
+        log.error("Databricks query FAILED after %.2fs: %s | %s: %s", time.time() - started, described, type(exc).__name__, exc)
+        raise
+    log.info("Databricks query OK in %.2fs: %d rows x %d columns | %s", time.time() - started, len(frame), len(frame.columns), described)
     return frame
 
 
 def execute(statement: str, parameters: dict[str, Any] | None = None) -> None:
-    with connection() as conn, conn.cursor() as cursor:
-        cursor.execute(statement, parameters or {})
+    parameters = parameters or {}
+    started = time.time()
+    try:
+        with connection() as conn, conn.cursor() as cursor:
+            cursor.execute(statement, parameters)
+    except Exception as exc:
+        log.error("Databricks statement FAILED after %.2fs: %s | %s: %s", time.time() - started, _describe(statement, parameters), type(exc).__name__, exc)
+        raise
+    log.info("Databricks statement OK in %.2fs: %s", time.time() - started, _describe(statement, parameters).split(" USING ")[0])
 
 
 def read_table(table: str) -> pd.DataFrame:
@@ -112,6 +147,7 @@ def table_exists(table: str) -> bool:
         return False
     exists = not frame.empty
     if not exists:
+        log.warning("Table %s does not exist (or is not visible to the service principal); features that read it stay empty", table_name(table))
         with _lock:
             _missing_tables.add(table)
     return exists

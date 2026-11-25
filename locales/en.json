@@ -4,7 +4,6 @@
   "short": "LDT",
   "description": "Compare local development conditions, read municipality-level score drivers, and link planning evidence to public investment choices.",
   "home": "Local Development Tracker home",
-  "suite": "Part of the GPBP Suite",
   "footerTagline": "Local development evidence for public investment decisions.",
   "copyright": "© {year} Local Development Tracker"
  },
@@ -508,7 +507,7 @@
   },
   "blocked": {
    "chooseUnit": "Choose a unit to brief.",
-   "noKey": "AI generation is not configured on this site (no OpenAI key). Cached briefs still show.",
+   "noKey": "AI generation is not configured on this site (the mAI Gateway is not set up, or the app is not running on Posit Connect). Cached briefs still show.",
    "off": "Generation is turned off on this site. Cached briefs still show.",
    "noOutputs": "Choose at least one output."
   },
@@ -1134,7 +1133,8 @@
    "NPL": "Nepal",
    "SRB": "Serbia",
    "ZMB": "Zambia",
-   "VNM": "Vietnam"
+   "VNM": "Vietnam",
+   "GIN": "Guinea"
   },
   "levels": {
    "province": {
@@ -1152,6 +1152,10 @@
    "commune": {
     "one": "Commune",
     "other": "Communes"
+   },
+   "region": {
+    "one": "Region",
+    "other": "Regions"
    }
   },
   "pillars": {

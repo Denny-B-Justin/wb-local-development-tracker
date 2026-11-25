@@ -31,7 +31,6 @@ def _env_bool(name: str, default: bool = False) -> bool:
 APP_NAME = "Local Development Tracker"
 APP_SHORT_NAME = "LDT"
 APP_VERSION = "2.0.0"
-SUITE_URL = "https://www.pim-pam.net/digital-tools"
 
 ENVIRONMENT = _env("LDT_ENV", "production").lower()
 DEBUG = _env_bool("DASH_DEBUG", False) and ENVIRONMENT == "development"
@@ -79,6 +78,11 @@ UC_COUNTRY_TABLES: dict[str, dict[str, str]] = {
         "scores": _env("LDT_VNM_SCORES_TABLE", "ldt_scores_vietnam"),
         "boundaries": _env("LDT_VNM_BOUNDARIES_TABLE", "ldt_boundaries_admin2_vietnam"),
     },
+    "GIN": {
+        "indicators": _env("LDT_GIN_INDICATORS_TABLE", "ldt_indicators_guinea"),
+        "scores": _env("LDT_GIN_SCORES_TABLE", "ldt_scores_guinea"),
+        "boundaries": _env("LDT_GIN_BOUNDARIES_TABLE", "ldt_boundaries_admin2_guinea"),
+    },
 }
 
 # Shared (all-country) tables. Each is optional: a missing table means the
@@ -113,14 +117,15 @@ LOCALES_DIR = ROOT_DIR / "locales"
 ASSETS_DIR = ROOT_DIR / "assets"
 
 # --------------------------------------------------------------------------
-# AI planning brief (optional; OpenAI-compatible endpoint)
+# AI planning brief (optional; Posit mAI Gateway, see ai/client.py)
 # --------------------------------------------------------------------------
-OPENAI_API_KEY = _env("OPENAI_API_KEY")
-OPENAI_BASE_URL = _env("OPENAI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
-OPENAI_MODEL = _env("OPENAI_MODEL", "gpt-4.1-mini")
-EXA_API_KEY = _env("EXA_API_KEY")
+# Gateway URL keeps its trailing "/". No API key: mAI identifies the app by
+# CONNECT_CONTENT_GUID, which Posit Connect sets and ai/client.py reads per call.
+MAI_BASE_URL = _env("MAI_BASE_URL")
+MAI_ENDPOINT = _env("MAI_ENDPOINT")
+MAI_MODEL = _env("MAI_MODEL") or "gpt-6-luna"
 AI_GENERATION_DISABLED = _env_bool("AI_GENERATION_DISABLED", False)
-AI_PROMPT_VERSION = _env("AI_PROMPT_VERSION", "v1")
+AI_PROMPT_VERSION = _env("AI_PROMPT_VERSION", "v2")
 AI_INVALIDATION_VERSION = _env("AI_INVALIDATION_VERSION", "v1")
 AI_VISITOR_HOURLY_LIMIT = _env_int("AI_VISITOR_HOURLY_LIMIT", 70)
 AI_DAILY_RUN_LIMIT = _env_int("AI_DAILY_RUN_LIMIT", 500)

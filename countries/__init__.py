@@ -6,10 +6,10 @@ import hmac
 
 import constants
 
-from . import npl, srb, vnm, zmb
+from . import gin, npl, srb, vnm, zmb
 from .schema import Country, Level
 
-REGISTRY: tuple[Country, ...] = tuple(module.COUNTRY.validate() for module in (npl, srb, zmb, vnm))
+REGISTRY: tuple[Country, ...] = tuple(module.COUNTRY.validate() for module in (npl, srb, zmb, vnm, gin))
 
 _slugs = [c.slug for c in REGISTRY]
 _codes = [c.iso3 for c in REGISTRY]

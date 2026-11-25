@@ -9,10 +9,10 @@ from dash import Dash, Input, Output, dcc, html
 
 import constants
 from pages import about, brief, compare, data_trust, home, map as map_page, methodology, not_found, profile, release_notes, resources, strategy_inventory, units, why_ldt
-from services import api, databricks, security, state, store
+from services import api, databricks, logs, security, state, store
 from utils import shell
 
-logging.basicConfig(level=constants.LOG_LEVEL, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+logs.setup()
 log = logging.getLogger("ldt")
 mimetypes.add_type("text/javascript", ".mjs")
 mimetypes.add_type("font/woff2", ".woff2")

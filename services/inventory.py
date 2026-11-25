@@ -110,8 +110,9 @@ def load_all_from_databricks() -> dict[str, list[dict[str, Any]]]:
             try:
                 data[country.iso3] = _from_volume(country)
             except Exception as exc:  # noqa: BLE001
-                log.warning("Volume listing failed for %s: %s", country.iso3, exc)
+                log.warning("%s: strategy inventory volume listing FAILED (%s: %s)", country.iso3, type(exc).__name__, exc)
                 data[country.iso3] = []
+    log.info("Strategy inventory: %s", {k: len(v) for k, v in data.items()} or "no documents")
     return data
 
 

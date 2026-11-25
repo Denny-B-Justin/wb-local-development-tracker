@@ -18,5 +18,6 @@ pyarrow
 shapely
 pyproj
 
-# Planning brief: PDF text extraction
+# Planning brief: PDF text extraction, and the mAI Gateway (OpenAI Responses API)
 pypdf
+openai

@@ -29,6 +29,7 @@ _warm_lock = threading.Lock()
 _hooks: list[Callable[[], None]] = []
 _status: dict[str, Any] = {"lastWarm": None, "lastError": None, "failed": {}, "running": False}
 _last_attempt = 0.0
+_reported_missing: set[str] = set()
 
 
 def on_refresh(hook: Callable[[], None]) -> None:
@@ -82,13 +83,20 @@ def _cached(name: str) -> Any:
         return hit[1]
     loaded = _read(name)
     if loaded is None:
-        schedule_warm()
+        if name not in _reported_missing:
+            _reported_missing.add(name)
+            log.warning("Artifact %s not found in %s or %s", name, constants.CACHE_DIR, constants.SNAPSHOT_DIR)
+        schedule_warm(reason=f"{name} is missing")
         return None
     payload, mtime = loaded
+    _reported_missing.discard(name)
     with _memo_lock:
         _memo[name] = (mtime, payload)
-    if time.time() - mtime > constants.DATA_MAX_AGE_SECONDS:
-        schedule_warm()
+    age = time.time() - mtime
+    origin = "cache" if (constants.CACHE_DIR / name).is_file() else "snapshot"
+    log.info("Loaded %s from %s (built %.1fh ago)", name, origin, age / 3600)
+    if age > constants.DATA_MAX_AGE_SECONDS:
+        schedule_warm(reason=f"{name} is {age / 3600:.1f}h old (max {constants.DATA_MAX_AGE_SECONDS / 3600:.0f}h)")
     return payload
 
 
@@ -112,6 +120,8 @@ def strategy_inventory(iso3: str) -> list[dict[str, Any]] | None:
 def write_country(iso3: str, payload: dict[str, Any], geometry: dict[str, Any], directory: Path | None = None) -> None:
     _write(_name("country", iso3), payload, directory)
     _write(_name("geometry", iso3), geometry, directory)
+    log.info("%s: wrote %s and %s to %s (%d units, %d mapped)", iso3, _name("country", iso3), _name("geometry", iso3),
+             directory or constants.CACHE_DIR, len(payload.get("units", [])), len(geometry.get("features", [])))
 
 
 def _keep_boundaries(iso3: str, payload: dict[str, Any], geometry: dict[str, Any]) -> dict[str, Any]:
@@ -146,30 +156,38 @@ def write_shared(plan_payload: dict[str, Any], inventory_payload: dict[str, Any]
 def warm(force: bool = False, directory: Path | None = None) -> dict[str, Any]:
     global _last_attempt
     if not databricks.configured():
+        log.warning("Data refresh skipped: Databricks is not configured")
         return {"ok": False, "reason": "Databricks is not configured"}
     if not _warm_lock.acquire(blocking=False):
+        log.info("Data refresh skipped: a refresh is already running")
         return {"ok": False, "reason": "A refresh is already running"}
     _status["running"] = True
     _last_attempt = time.time()
     built, failed = [], {}
+    started = time.time()
+    selected = [c for c in countries.REGISTRY if force or c.status != "draft"]
+    log.info("Data refresh started (%s): %s -> %s", "forced" if force else "scheduled", [c.iso3 for c in selected], directory or constants.CACHE_DIR)
     try:
-        for country in countries.REGISTRY:
-            if country.status == "draft" and not force:
-                continue
+        for country in selected:
+            country_started = time.time()
             try:
                 payload, geometry = assemble.from_databricks(country)
                 geometry = _keep_boundaries(country.iso3, payload, geometry)
                 write_country(country.iso3, payload, geometry, directory)
                 built.append(country.iso3)
+                log.info("%s: refresh OK in %.1fs", country.iso3, time.time() - country_started)
             except Exception as exc:  # noqa: BLE001
-                log.exception("Warm failed for %s", country.iso3)
+                log.exception("%s: refresh FAILED after %.1fs (%s: %s); the previous artifact keeps serving",
+                              country.iso3, time.time() - country_started, type(exc).__name__, exc)
                 failed[country.iso3] = str(exc)[:300]
         try:
             write_shared(plans.load_from_databricks(), inventory.load_all_from_databricks(), directory)
+            log.info("Shared artifacts (plan sources, strategy inventory) written")
         except Exception as exc:  # noqa: BLE001
-            log.exception("Warm failed for shared tables")
+            log.exception("Shared tables refresh FAILED (%s: %s)", type(exc).__name__, exc)
             failed["shared"] = str(exc)[:300]
         _status.update(lastWarm=time.time(), failed=failed, lastError=None if built else "No country could be rebuilt")
+        (log.warning if failed else log.info)("Data refresh finished in %.1fs: built=%s failed=%s", time.time() - started, built, sorted(failed) or "none")
         with _memo_lock:
             _memo.clear()
         for hook in _hooks:
@@ -183,19 +201,27 @@ def warm(force: bool = False, directory: Path | None = None) -> dict[str, Any]:
         _warm_lock.release()
 
 
-def schedule_warm(force: bool = False) -> None:
+def schedule_warm(force: bool = False, reason: str = "") -> None:
     if constants.DISABLE_BACKGROUND_WARM or not databricks.configured():
         return
     if not force and time.time() - _last_attempt < constants.WARM_RETRY_COOLDOWN_SECONDS:
         return
     if _warm_lock.locked():
         return
+    log.info("Background data refresh scheduled%s", f": {reason}" if reason else "")
     threading.Thread(target=warm, kwargs={"force": force}, name="ldt-warm", daemon=True).start()
 
 
 def startup() -> None:
+    for country in countries.REGISTRY:
+        found = next((p for p in _candidates(_name("country", country.iso3)) if p.is_file()), None)
+        if found is None:
+            log.warning("%s: no data artifact yet; its workspace shows a loading message until a refresh builds it", country.iso3)
+        else:
+            log.info("%s: data artifact %s (%s, built %.1fh ago)", country.iso3, found.name,
+                     "cache" if found.parent == constants.CACHE_DIR else "snapshot", (time.time() - found.stat().st_mtime) / 3600)
     if constants.FORCE_WARM_ON_START:
-        schedule_warm(force=True)
+        schedule_warm(force=True, reason="LDT_FORCE_WARM_ON_START is set")
         return
     newest = 0.0
     for country in countries.REGISTRY:
@@ -204,7 +230,7 @@ def startup() -> None:
                 newest = max(newest, path.stat().st_mtime)
                 break
     if time.time() - newest > constants.DATA_MAX_AGE_SECONDS:
-        schedule_warm(force=True)
+        schedule_warm(force=True, reason=f"newest artifact is older than {constants.DATA_MAX_AGE_SECONDS / 3600:.0f}h")
 
 
 def status() -> dict[str, Any]:
