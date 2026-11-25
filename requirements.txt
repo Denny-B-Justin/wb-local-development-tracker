@@ -1,23 +1,25 @@
 # Local Development Tracker (Dash)
 
-dash[compress]
-flask-compress
-plotly
-pandas
-numpy
-python-dotenv
-requests
-gunicorn
+dash[compress]==4.5.1
+flask==3.1.3
+werkzeug==3.1.9
+flask-compress==1.26
+plotly==7.2.0
+pandas==2.3.3
+numpy==2.2.6
+python-dotenv==1.2.4
+requests==2.34.2
+gunicorn==27.0.1
 
 # Azure Databricks Unity Catalog (OAuth service principal)
-databricks-sql-connector
-databricks-sdk
-pyarrow
+databricks-sql-connector==4.10.0
+databricks-sdk==0.170.0
+pyarrow==25.0.1
 
 # Boundary geometry (decode, reproject, simplify)
-shapely
-pyproj
+shapely==2.1.2
+pyproj==3.7.1
 
 # Planning brief: PDF text extraction, and the mAI Gateway (OpenAI Responses API)
-pypdf
-openai
+pypdf==7.1.1
+openai==3.59.0
