@@ -15,13 +15,13 @@
   },
   "files": {
     ".env.sample": {
-      "checksum": "c06256563aea07635013293bbc2c8aa9"
+      "checksum": "bcbdf86a3393d986065563120deb3dc9"
     },
     ".gitignore": {
       "checksum": "7129c6246eb7c5bd2e7937f79825f464"
     },
     "README.md": {
-      "checksum": "c0e319fb67398e4100e8df02c5944ae6"
+      "checksum": "b257ad88fcbc5933596e6d0ed320eb84"
     },
     "ai/__init__.py": {
       "checksum": "b27acb634af80ff31e4fd236e73aca41"
@@ -33,7 +33,7 @@
       "checksum": "74f9cebb709e2eeb14217eb5d6e29e40"
     },
     "ai/documents.py": {
-      "checksum": "cca90fd1bd13bdcea6ff5c39677289b3"
+      "checksum": "38b4cb90a2f13e3597bc0d0beafd975d"
     },
     "ai/models.py": {
       "checksum": "aaf9127279694beca74eb707dd285be3"
@@ -42,13 +42,13 @@
       "checksum": "95d45c2e45474f175c1e9f4d52838c58"
     },
     "ai/pipeline.py": {
-      "checksum": "1d82bcd3b92a1b485733f873cc3ff7a1"
+      "checksum": "68550b9c15304627123baadc0ebeea09"
     },
     "ai/prompt.py": {
       "checksum": "94340cb5b3c7e5a0c84009d1bad3cf3c"
     },
     "app.py": {
-      "checksum": "a61b15dd9757d4d09b84ea1a99f4a067"
+      "checksum": "ec0d4f956774091ca87829f79423019d"
     },
     "assets/fonts/LICENSE.txt": {
       "checksum": "1c04f89084ca598c510d8dd4618f456a"
@@ -300,7 +300,7 @@
       "checksum": "1daff7d446d8225057ef4a77ea9ee290"
     },
     "assets/js/ldt-2-map.js": {
-      "checksum": "e86360cb3869be5352aea94366059ddc"
+      "checksum": "ce79f192fe759f577fee5e3730dc9f45"
     },
     "assets/js/ldt-3-charts.js": {
       "checksum": "ba5f07b2650074101013e82d5ba82dfa"
@@ -312,7 +312,7 @@
       "checksum": "eec1758fcfbce50ee80ad6e3de21e92e"
     },
     "assets/styles.css": {
-      "checksum": "897c6d9bb08f3c24981d1b45ab582f1e"
+      "checksum": "740239096ffeddb7db4004c70c94b4f2"
     },
     "assets/vendor/maplibre/LICENSE.txt": {
       "checksum": "c73ffe791f71e9dbcf26aeff3d6269ac"
@@ -330,10 +330,10 @@
       "checksum": "1f85bc4bf231faf5ebd8ab8e9f99f7ce"
     },
     "constants.py": {
-      "checksum": "9d376f88a39879cb527b8fa5c93acde5"
+      "checksum": "1ec7f5a5cc512206d0c6ea556811eed6"
     },
     "countries/__init__.py": {
-      "checksum": "6c3a9437ff27a7c91c1811896985fde3"
+      "checksum": "6c5aea9171c2c4b9dc2b7190d5547db5"
     },
     "countries/gin.py": {
       "checksum": "ac654981cdef2cdb7ff4b8be8cb11144"
@@ -390,10 +390,10 @@
       "checksum": "1ef4dcbaab774d91a064fa2c3d8a6b4b"
     },
     "locales/en.json": {
-      "checksum": "c2d6d4b06c77b2737e4f7f8acb6babc7"
+      "checksum": "07febf88e26f5eb5836d44ebe3272965"
     },
     "locales/fr.json": {
-      "checksum": "728270ab7b403571779ad068fb264d0b"
+      "checksum": "d9352bf5ba81da719e9bef55e6db564f"
     },
     "pages/__init__.py": {
       "checksum": "d41d8cd98f00b204e9800998ecf8427e"
@@ -450,10 +450,10 @@
       "checksum": "71a39d631ce7fe00872c460d24083111"
     },
     "scripts/build_snapshot.py": {
-      "checksum": "45c36053b47dc0c3f63ac2431c6c665d"
+      "checksum": "cb0ed486b3faaa64e7167eab8953d7a0"
     },
     "scripts/check_country.py": {
-      "checksum": "1cc5f60729d18aff1b42cbbb9762d82b"
+      "checksum": "7b544348c8799e0e32400bbfbd0deca8"
     },
     "scripts/uc_tables.sql": {
       "checksum": "5fce55110a964eed517d750c9f83bcfc"
@@ -462,22 +462,22 @@
       "checksum": "d41d8cd98f00b204e9800998ecf8427e"
     },
     "services/api.py": {
-      "checksum": "8e73ac98e143f346562b4c1fa2ec77f4"
+      "checksum": "2d5213bf877179bcafeab258b79c8718"
     },
     "services/assemble.py": {
-      "checksum": "d94edb3d1a08acefa97a089e43f6d53c"
+      "checksum": "b70cdc33c6f43c58d888ffec06c8df49"
     },
     "services/catalog.py": {
       "checksum": "c80cd8839d6c495187275f6224a8bb83"
     },
     "services/databricks.py": {
-      "checksum": "413f6ad4cae418524ef6c95729e2f79c"
+      "checksum": "96c871a8c799b4b484dc1d949511d7ff"
     },
     "services/i18n.py": {
       "checksum": "2964ea6d8a5dd94f3ce05302084f0cee"
     },
     "services/inventory.py": {
-      "checksum": "07493aef22ee04e84f23a909c7e31648"
+      "checksum": "3d6a795574cbde4199f13be362c2840e"
     },
     "services/logs.py": {
       "checksum": "e74a945a2c4459fc97fff4b25278c0d6"
@@ -486,7 +486,7 @@
       "checksum": "2c65d90de737eba5ee50f6663a4c9031"
     },
     "services/plans.py": {
-      "checksum": "76ceb93d8edff72a0fdf3da3901f6205"
+      "checksum": "a75e518bed5d40aa2694889babfa34c1"
     },
     "services/reference/indicator_definitions.json": {
       "checksum": "c39c7a12dfe20c7ea3b4c1422d56ea82"
@@ -498,7 +498,7 @@
       "checksum": "b310108e74cd4056455c3feb027303d0"
     },
     "services/store.py": {
-      "checksum": "d889645b1f2cc9b67b96bda62c29f928"
+      "checksum": "2252326d07ebc6111125dc604e1c9bca"
     },
     "services/text.py": {
       "checksum": "2d17c15430f1be8c2b69f4a6b4a6e0b2"
@@ -510,7 +510,7 @@
       "checksum": "b2f81f34db01638a969d0b7b30bd4bab"
     },
     "utils/shell.py": {
-      "checksum": "edc35542c59a0e12cc70da0b160870a7"
+      "checksum": "89e2a223ff9ac38e6f7d49fe796b28c5"
     }
   }
 }

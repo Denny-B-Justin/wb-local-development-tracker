@@ -32,10 +32,15 @@
     if (!geometryCache[iso3]) {
       // cache: "no-cache" revalidates by ETag, so a copy cached under an older, longer max-age is never reused.
       geometryCache[iso3] = fetch("api/geometry/" + encodeURIComponent(iso3), { credentials: "same-origin", cache: "no-cache" }).then(function (response) {
-        if (!response.ok) throw new Error("geometry " + response.status);
+        if (!response.ok) throw new Error("geometry " + iso3 + ": HTTP " + response.status);
+        var type = response.headers.get("Content-Type") || "";
+        if (type.indexOf("json") === -1) throw new Error("geometry " + iso3 + ": expected JSON, got " + (type || "no content type") + " (the API route did not answer)");
         return response.json();
       });
-      geometryCache[iso3].catch(function () { delete geometryCache[iso3]; });
+      geometryCache[iso3].catch(function (error) {
+        console.error("[LDT] map boundaries failed to load:", error && error.message);
+        delete geometryCache[iso3];
+      });
     }
     return geometryCache[iso3];
   }

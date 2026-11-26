@@ -4,8 +4,12 @@ from __future__ import annotations
 
 import logging
 import mimetypes
+import os
+from importlib import metadata
+from typing import Any
 
 from dash import Dash, Input, Output, dcc, html
+from flask import Flask
 
 import constants
 from pages import about, brief, compare, data_trust, home, map as map_page, methodology, not_found, profile, release_notes, resources, strategy_inventory, units, why_ldt
@@ -40,7 +44,40 @@ INDEX = """<!DOCTYPE html>
 </body>
 </html>"""
 
-app = Dash(
+_attached: set[int] = set()
+_csp_hashes: list[str] | None = None
+
+
+def attach(flask_app: Flask) -> None:
+    """Give a Flask server the tracker's API routes, config and hardening (once per server)."""
+    if _csp_hashes is None or id(flask_app) in _attached:
+        return
+    _attached.add(id(flask_app))
+    flask_app.config.update(MAX_CONTENT_LENGTH=64 * 1024, JSON_SORT_KEYS=False, SESSION_COOKIE_SECURE=True, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax")
+    api.register(flask_app)
+    security.harden(flask_app, _csp_hashes)
+    rules = sorted(str(r) for r in flask_app.url_map.iter_rules() if str(r).startswith("/api/"))
+    log.info("API routes attached to Flask server %r (id %x): %s", flask_app.name, id(flask_app), rules)
+
+
+class TrackerDash(Dash):
+    """Dash that keeps the tracker's Flask routes on whichever server it is bound to.
+
+    A host (Posit Connect's Dash runner) may call ``init_app`` to bind the app to its own
+    Flask server. Routes added to the original server would then be unreachable, and
+    /api/* would fall through to Dash's catch-all and return the HTML page instead.
+    """
+
+    def init_app(self, app: Any = None, **kwargs) -> None:
+        previous = getattr(self, "server", None)
+        super().init_app(app, **kwargs)
+        if previous is not None and self.server is not previous:
+            log.warning("Dash was re-bound to another Flask server (id %x -> %x) by the host; attaching the API routes there too",
+                        id(previous), id(self.server))
+        attach(self.server)
+
+
+app = TrackerDash(
     __name__,
     title=constants.APP_NAME,
     update_title=None,
@@ -55,8 +92,6 @@ app = Dash(
     ],
 )
 app.index_string = INDEX
-server = app.server
-server.config.update(MAX_CONTENT_LENGTH=64 * 1024, JSON_SORT_KEYS=False, SESSION_COOKIE_SECURE=True, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax")
 
 app.layout = html.Div([dcc.Location(id="url", refresh="callback-nav"), html.Div(id="page", className="page-root")])
 
@@ -100,10 +135,26 @@ def route(search):
                                                className="not-found"))]
 
 
+def _log_runtime() -> None:
+    def version(name: str) -> str:
+        try:
+            return metadata.version(name)
+        except metadata.PackageNotFoundError:
+            return "not installed"
+
+    log.info("Runtime: dash %s, flask %s, werkzeug %s, flask-compress %s, gunicorn %s", version("dash"), version("flask"),
+             version("werkzeug"), version("flask-compress"), version("gunicorn"))
+    log.info("Dash paths: routes_pathname_prefix=%s requests_pathname_prefix=%s; host env: %s", app.config.routes_pathname_prefix,
+             app.config.requests_pathname_prefix, {k: v for k, v in os.environ.items() if k.startswith(("DASH_", "SCRIPT_NAME"))} or "none")
+
+
 for module in (units, brief):
     module.register(app)
-api.register(server)
-security.harden(server, app.csp_hashes())
+# Hashes are final only once every callback is defined; servers bound later reuse them.
+_csp_hashes = list(app.csp_hashes())
+attach(app.server)
+server = app.server
+_log_runtime()
 store.startup()
 
 if __name__ == "__main__":

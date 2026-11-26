@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 from typing import Any
 
 from flask import Flask, Response, jsonify, request
@@ -14,6 +15,8 @@ import countries
 from . import catalog, model as model_module, security, state, store
 from ai import cache as ai_cache
 from ai import pipeline
+
+log = logging.getLogger(__name__)
 
 
 def _csv_cell(value: str) -> str:
@@ -101,18 +104,30 @@ def _brief_context(body: dict[str, Any]) -> tuple[dict[str, Any] | None, str | N
 
 
 def register(server: Flask) -> None:
+    @server.before_request
+    def _unrouted_api():
+        # Dash's catch-all answers any unknown path with the HTML page; an API caller must get a 404 instead.
+        rule = request.url_rule.rule if request.url_rule else None
+        if request.path.startswith("/api/") and (rule is None or "<path:" in rule):
+            log.error("No API route matched %s %s (matched rule: %s); answering 404 instead of the HTML page", request.method, request.path, rule)
+            return Response("Not found", status=404)
+        return None
+
     @server.get("/api/geometry/<iso3>")
     def geometry(iso3: str):
         country = countries.BY_ISO3.get(iso3.upper()[:3])
         if not country or not countries.is_visible(country, request.cookies.get(state.PREVIEW_COOKIE)):
+            log.warning("Geometry %s: unknown or not visible country; 404", iso3[:8])
             return Response("Not found", status=404)
         found = store.geometry_gz(country.iso3)
         if not found:
+            log.warning("Geometry %s: no geometry artifact in the cache or snapshot; 404", country.iso3)
             return Response("Not found", status=404)
         data, mtime = found
         etag = hashlib.sha1(f"{country.iso3}{mtime}{len(data)}".encode()).hexdigest()
         if request.headers.get("If-None-Match") == etag:
             return Response(status=304)
+        log.info("Geometry %s: served %.1f KB (gzip JSON)", country.iso3, len(data) / 1024)
         return Response(data, mimetype="application/json", headers={"Content-Encoding": "gzip", "ETag": etag, "Cache-Control": "no-cache", "Vary": "Accept-Encoding"})
 
     @server.get("/api/export/units.csv")
