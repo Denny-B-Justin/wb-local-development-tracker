@@ -164,6 +164,7 @@ def warm(force: bool = False, directory: Path | None = None) -> dict[str, Any]:
     _status["running"] = True
     _last_attempt = time.time()
     built, failed = [], {}
+    plan_areas: dict[str, list[str]] = {}
     started = time.time()
     selected = [c for c in countries.REGISTRY if force or c.status != "draft"]
     log.info("Data refresh started (%s): %s -> %s", "forced" if force else "scheduled", [c.iso3 for c in selected], directory or constants.CACHE_DIR)
@@ -175,13 +176,16 @@ def warm(force: bool = False, directory: Path | None = None) -> dict[str, Any]:
                 geometry = _keep_boundaries(country.iso3, payload, geometry)
                 write_country(country.iso3, payload, geometry, directory)
                 built.append(country.iso3)
+                if country.features.plan_sources:
+                    level = country.filter_levels[0] if country.plan_source_level == "top" else country.local_level
+                    plan_areas[country.iso3] = sorted({u["names"][level.column] for u in payload["units"]})
                 log.info("%s: refresh OK in %.1fs", country.iso3, time.time() - country_started)
             except Exception as exc:  # noqa: BLE001
                 log.exception("%s: refresh FAILED after %.1fs (%s: %s); the previous artifact keeps serving",
                               country.iso3, time.time() - country_started, type(exc).__name__, exc)
                 failed[country.iso3] = str(exc)[:300]
         try:
-            write_shared(plans.load_from_databricks(), inventory.load_all_from_databricks(), directory)
+            write_shared(plans.load_from_databricks(plan_areas), inventory.load_all_from_databricks(), directory)
             log.info("Shared artifacts (plan sources, strategy inventory) written")
         except Exception as exc:  # noqa: BLE001
             log.exception("Shared tables refresh FAILED (%s: %s)", type(exc).__name__, exc)

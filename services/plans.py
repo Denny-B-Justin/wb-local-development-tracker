@@ -52,11 +52,38 @@ def shape(frame: pd.DataFrame) -> dict[str, Any]:
     return out
 
 
-def load_from_databricks() -> dict[str, Any]:
-    frame = databricks.read_optional(constants.UC_SHARED_TABLES["plan_sources"])
+def report(shaped: dict[str, Any], areas: dict[str, list[str]]) -> None:
+    """Per country: which areas have a plan, which do not, and plan rows filed under a name no area has."""
+    for iso3, names in areas.items():
+        bucket = shaped.get(iso3) or {"local": {}, "national": []}
+        keys = {plan_key(n): n for n in names}
+        covered = sorted(n for k, n in keys.items() if k in bucket["local"])
+        missing = sorted(n for k, n in keys.items() if k not in bucket["local"])
+        stray = sorted(k for k in bucket["local"] if k not in keys)
+        (log.info if not missing else log.warning)(
+            "%s plan sources: %d national, %d of %d areas have a local plan%s", iso3, len(bucket["national"]), len(covered), len(keys),
+            f"; without a plan: {missing[:12]}{' ...' if len(missing) > 12 else ''}" if missing else "")
+        if stray:
+            log.warning("%s plan sources: %d rows are filed under names no area has (check spelling): %s; area names are %s",
+                        iso3, len(stray), stray[:12], sorted(keys)[:12])
+
+
+def load_from_databricks(areas: dict[str, list[str]] | None = None) -> dict[str, Any]:
+    """``areas`` maps ISO3 to the area names a local plan is matched against, for the coverage report."""
+    table = constants.UC_SHARED_TABLES["plan_sources"]
+    if not databricks.table_exists(table):
+        log.error("Plan sources: %s does not exist, so every area shows \"No plan\" and planning briefs cannot run alignment, SWOT "
+                  "or recommendations. Create it with scripts/uc_tables.sql (or set LDT_PLAN_SOURCES_TABLE) and add plan rows.",
+                  databricks.table_name(table))
+        frame = pd.DataFrame()
+    else:
+        frame = databricks.read_table(table)
     shaped = shape(frame)
     if frame.empty:
-        log.info("Plan sources: none loaded (%s is missing or empty)", constants.UC_SHARED_TABLES["plan_sources"])
+        log.warning("Plan sources: none loaded (%s is missing or empty)", table)
     else:
-        log.info("Plan sources: %d rows -> %s", len(frame), {k: {"national": len(v["national"]), "local areas": len(v["local"])} for k, v in shaped.items()})
+        log.info("Plan sources: %d rows, %d kept (active, with an http(s) link) -> %s", len(frame),
+                 sum(len(v["national"]) + sum(len(d) for d in v["local"].values()) for v in shaped.values()),
+                 {k: {"national": len(v["national"]), "local areas": len(v["local"])} for k, v in shaped.items()})
+    report(shaped, areas or {})
     return shaped

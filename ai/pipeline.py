@@ -171,11 +171,15 @@ def load_cached(context: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
 
 def _document(stage: str, source: dict[str, Any], label: str, area: str | None, country: str) -> dict[str, Any]:
+    log.info("%s: %s uses \"%s\" (%s)", stage, label, source["title"], documents.show_url(source["link"]))
     data, content_type, final_url = documents.fetch_document(source["link"])
     text = documents.extract_text(data, content_type)
     if len(text.strip()) < 200:
+        log.warning("%s: only %d characters of text from %s (%s); at least 200 are needed", stage, len(text.strip()),
+                    documents.show_url(final_url), content_type or "no content-type")
         raise RuntimeError("No readable text could be extracted from the plan document.")
     passages = documents.passages(text)
+    log.info("%s: %d characters, %d passages kept from %s", stage, len(text), len(passages), documents.show_url(final_url))
     preview = "\n\n".join(p["text"] for p in passages[:12]) or text[:12000]
     structured = {"countryCode": country, "sourceType": "national_plan" if stage == "national_plan_context" else "province_plan", "title": source["title"],
                   "province": area, "sourceUrlOrPath": final_url, "contentMode": "full_text", "extractedText": text[:200000], "passages": passages,
@@ -209,10 +213,14 @@ def _generate(stage: str, context: dict[str, Any], results: dict[str, dict]) -> 
         return _result(stage, reply.text, {"series": len(context["indicatorSeries"])}, refs_data, reply.model)
     if stage == "province_plan_context":
         if not context["provincePlanCandidates"]:
+            log.warning("%s: no plan row is filed under \"%s\" for %s in %s; add one there (plan_level, province = that name)", stage,
+                        context["localPlanUnitName"], context["country"]["code"], constants.UC_SHARED_TABLES["plan_sources"])
             raise RuntimeError(f"No local/SNG plan URL is available for {context['localPlanUnitName']}.")
         return _document(stage, context["provincePlanCandidates"][0], f"{context['localPlanUnitName']} local/SNG plan", context["localPlanUnitName"], context["country"]["code"])
     if stage == "national_plan_context":
         if not context["nationalPlanSources"]:
+            log.warning("%s: %s has no national plan (none in its country config nor in %s)", stage, context["country"]["code"],
+                        constants.UC_SHARED_TABLES["plan_sources"])
             raise RuntimeError("No national plan is tracked for this country.")
         return _document(stage, context["nationalPlanSources"][0], f"{context['country']['name']} national plan", None, context["country"]["code"])
     if stage == "web_context_search":
