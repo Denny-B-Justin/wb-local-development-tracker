@@ -45,10 +45,13 @@ def load_local(scope: dict[str, Any], stage: str) -> dict[str, Any] | None:
 
 def save(scope: dict[str, Any], stage: str, payload: dict[str, Any]) -> None:
     key = cache_key(scope, stage)
-    AI_DIR.mkdir(parents=True, exist_ok=True)
-    tmp = AI_DIR / f".{key}.{os.getpid()}.tmp"
-    tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-    os.replace(tmp, _path(key))
+    try:
+        AI_DIR.mkdir(parents=True, exist_ok=True)
+        tmp = AI_DIR / f".{key}.{os.getpid()}.tmp"
+        tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+        os.replace(tmp, _path(key))
+    except OSError as exc:
+        log.error("AI cache: cannot write %s stage result to %s (%s); the brief page will not show it", stage, AI_DIR, exc)
     table = constants.UC_SHARED_TABLES["ai_stage_cache"]
     if not databricks.configured() or not databricks.table_exists(table):
         return
@@ -90,10 +93,13 @@ def pull_remote(scope: dict[str, Any], stages: list[str]) -> int:
 
 
 def record_run(scope: dict[str, Any], stage: str, status: str) -> None:
-    AI_DIR.mkdir(parents=True, exist_ok=True)
     line = json.dumps({"at": time.time(), "stage": stage, "status": status, "country": scope["countryCode"]})
-    with _lock, (AI_DIR / f"runs-{datetime.now(timezone.utc):%Y%m%d}.log").open("a", encoding="utf-8") as handle:
-        handle.write(line + "\n")
+    try:
+        AI_DIR.mkdir(parents=True, exist_ok=True)
+        with _lock, (AI_DIR / f"runs-{datetime.now(timezone.utc):%Y%m%d}.log").open("a", encoding="utf-8") as handle:
+            handle.write(line + "\n")
+    except OSError as exc:
+        log.warning("AI cache: cannot record the run in %s (%s); the daily run limit is not enforced", AI_DIR, exc)
 
 
 def runs_last_24h() -> int:

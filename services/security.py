@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import logging
 import re
 import threading
 import time
@@ -15,6 +16,8 @@ from flask import Flask, Response, request
 import constants
 
 from .text import clean
+
+log = logging.getLogger(__name__)
 
 ALLOWED_PARAMS = {
     "page", "lang", "country", "year", "compare", "unit", "tab", "trend", "pillar", "indicator", "selected",
@@ -111,11 +114,16 @@ def client_key() -> str:
 
 
 def same_origin() -> bool:
+    """The browser's Origin (or Referer) names this site. Behind a proxy (Posit Connect) the request's
+    Host can be the internal address, so the host the proxy forwarded (X-Forwarded-Host) also counts."""
     origin = request.headers.get("Origin") or request.headers.get("Referer") or ""
-    if not origin:
-        return False
-    host = urlparse(origin).netloc
-    return host == request.host or origin.rstrip("/") in constants.ALLOWED_ORIGINS
+    hosts = {request.host, *(h.strip() for h in request.headers.get("X-Forwarded-Host", "").split(",") if h.strip())}
+    host = urlparse(origin).netloc if origin else ""
+    if host and (host in hosts or origin.rstrip("/") in constants.ALLOWED_ORIGINS):
+        return True
+    log.warning("Rejected %s %s: origin %r does not match host %s (set LDT_ALLOWED_ORIGINS to allow it)", request.method, request.path,
+                urlparse(origin)._replace(path="", query="", fragment="").geturl() if origin else None, sorted(hosts))
+    return False
 
 
 def content_security_policy(script_hashes: list[str]) -> str:

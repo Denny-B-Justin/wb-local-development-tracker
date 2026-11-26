@@ -15,6 +15,7 @@ import constants
 from pages import about, brief, compare, data_trust, home, map as map_page, methodology, not_found, profile, release_notes, resources, strategy_inventory, units, why_ldt
 from services import api, databricks, logs, security, state, store
 from utils import shell
+from ai import client as ai_client, models
 
 logs.setup()
 log = logging.getLogger("ldt")
@@ -148,6 +149,27 @@ def _log_runtime() -> None:
              app.config.requests_pathname_prefix, {k: v for k, v in os.environ.items() if k.startswith(("DASH_", "SCRIPT_NAME"))} or "none")
 
 
+def _log_settings() -> None:
+    """Which settings this process sees: names and set/missing only, never secret values."""
+    missing = databricks.missing_settings()
+    log.info("Settings: Databricks %s", "configured" if not missing else f"NOT configured (missing {missing}); data comes from the shipped snapshot only")
+    mai = {name: bool(os.environ.get(name, "").strip()) for name in ("MAI_BASE_URL", "MAI_ENDPOINT", "CONNECT_CONTENT_GUID")}
+    model = constants.MAI_MODEL if models.selected() else f"{constants.MAI_MODEL} (NOT an allowed model: {sorted(models.MODELS)})"
+    (log.info if all(mai.values()) and models.selected() else log.warning)(
+        "Settings: AI brief %s; model %s; %s", "ready" if ai_client.configured() else "NOT configured",
+        model, ", ".join(f"{k} {'set' if v else 'MISSING'}" for k, v in mai.items()))
+    if constants.CACHE_DIR != constants.CACHE_DIR_REQUESTED:
+        log.warning("Settings: cache folder %s is not writable; using %s instead (not shared between processes, cleared on restart)",
+                    constants.CACHE_DIR_REQUESTED, constants.CACHE_DIR)
+    else:
+        log.info("Settings: cache folder %s (writable)", constants.CACHE_DIR)
+    shipped = sorted(p.name for p in constants.SNAPSHOT_DIR.glob("*.json.gz")) if constants.SNAPSHOT_DIR.is_dir() else []
+    (log.info if shipped else log.error)("Settings: snapshot folder %s holds %d artifacts%s", constants.SNAPSHOT_DIR, len(shipped),
+                                         "" if shipped else " (LDT_SNAPSHOT_DIR wrong, or data_snapshot/ was not deployed)")
+    log.info("Settings: LDT_ALLOWED_ORIGINS has %d entries; background refresh %s, max artifact age %.0fh", len(constants.ALLOWED_ORIGINS),
+             "disabled" if constants.DISABLE_BACKGROUND_WARM else "enabled", constants.DATA_MAX_AGE_SECONDS / 3600)
+
+
 for module in (units, brief):
     module.register(app)
 # Hashes are final only once every callback is defined; servers bound later reuse them.
@@ -155,6 +177,7 @@ _csp_hashes = list(app.csp_hashes())
 attach(app.server)
 server = app.server
 _log_runtime()
+_log_settings()
 store.startup()
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import re
+import tempfile
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -103,7 +104,22 @@ UC_TABLE_NAMING = {
 # --------------------------------------------------------------------------
 # Data artifacts (built off the request path; see services/store.py)
 # --------------------------------------------------------------------------
-CACHE_DIR = Path(_env("LDT_CACHE_DIR", str(ROOT_DIR / ".ldt_cache")))
+def _writable_dir(path: Path) -> Path:
+    """``path`` if the app can write there, else a folder in the system temp dir (the deployed app folder may be read-only)."""
+    for candidate in (path, Path(tempfile.gettempdir()) / "ldt_cache"):
+        try:
+            candidate.mkdir(parents=True, exist_ok=True)
+            probe = candidate / f".write-test-{os.getpid()}"
+            probe.write_text("ok", encoding="utf-8")
+            probe.unlink()
+            return candidate
+        except OSError:
+            continue
+    return path
+
+
+CACHE_DIR_REQUESTED = Path(_env("LDT_CACHE_DIR", str(ROOT_DIR / ".ldt_cache")))
+CACHE_DIR = _writable_dir(CACHE_DIR_REQUESTED)
 SNAPSHOT_DIR = Path(_env("LDT_SNAPSHOT_DIR", str(ROOT_DIR / "data_snapshot")))
 DATA_MAX_AGE_SECONDS = _env_int("LDT_DATA_MAX_AGE_SECONDS", 12 * 3600)
 WARM_RETRY_COOLDOWN_SECONDS = _env_int("LDT_WARM_RETRY_COOLDOWN_SECONDS", 600)
