@@ -237,8 +237,14 @@ def startup() -> None:
             if path.is_file():
                 newest = max(newest, path.stat().st_mtime)
                 break
+    plans_file = next((p for p in _candidates(_name("plans")) if p.is_file()), None)
+    documents = {iso3: len(b.get("national", [])) + sum(len(d) for d in b.get("local", {}).values()) for iso3, b in plan_sources().items()}
+    (log.info if any(documents.values()) else log.warning)("Plan sources artifact %s: documents per country %s", plans_file or "missing", documents or "none")
     if time.time() - newest > constants.DATA_MAX_AGE_SECONDS:
         schedule_warm(force=True, reason=f"newest artifact is older than {constants.DATA_MAX_AGE_SECONDS / 3600:.0f}h")
+    elif not any(documents.values()) and databricks.configured():
+        # File times are not reliable after a deploy (a fresh checkout looks new), so an empty plan list triggers a refresh too.
+        schedule_warm(force=True, reason="the plan sources artifact has no plans")
 
 
 def status() -> dict[str, Any]:

@@ -354,40 +354,40 @@
       "checksum": "b00485a2c75a54a6d2e6dfa4ca862eb0"
     },
     "data_snapshot/country_GIN.json.gz": {
-      "checksum": "42e1837dcc979781232ba99697799bfa"
+      "checksum": "fc182bdf4aab2c4c4164eea991e30938"
     },
     "data_snapshot/country_NPL.json.gz": {
-      "checksum": "c361de65a6f5e893ef33672031fc64a9"
+      "checksum": "45ffee6e120b799f02fcedb56da17b1d"
     },
     "data_snapshot/country_SRB.json.gz": {
-      "checksum": "0f7d2cac00efaee08b433db72a06c211"
+      "checksum": "8012f5be049f2934a84c5574948eb945"
     },
     "data_snapshot/country_VNM.json.gz": {
-      "checksum": "09bd5eb7105b29ade89ae0e9ee085a93"
+      "checksum": "ccc52404197fef8b8aa5e88bcadf3de4"
     },
     "data_snapshot/country_ZMB.json.gz": {
-      "checksum": "48abfaa849260f695a486a39767a08c3"
+      "checksum": "d1e0f62a003c79d25985a3d558ba1467"
     },
     "data_snapshot/geometry_GIN.json.gz": {
-      "checksum": "a209c3f9f924da6412b0ddaa911f7581"
+      "checksum": "05b06b730d7eae3694fb1fb03c70ea1b"
     },
     "data_snapshot/geometry_NPL.json.gz": {
-      "checksum": "051b417350eadd2a72181245c836f60f"
+      "checksum": "57e51f9163ee01445e0b12a1fee7b662"
     },
     "data_snapshot/geometry_SRB.json.gz": {
-      "checksum": "aabc6a3d94be8c160a6e29c534c7cfff"
+      "checksum": "d64e095a4316ae580e0b51b08cd6832f"
     },
     "data_snapshot/geometry_VNM.json.gz": {
-      "checksum": "f4bdcbb36b8c94d50a0f875501e4a52c"
+      "checksum": "fd54a689e061569d4a61260f9d03a5b7"
     },
     "data_snapshot/geometry_ZMB.json.gz": {
-      "checksum": "03b4d55c0c1080c961d79b83adf9ffa1"
+      "checksum": "7c5bdf5ef273a6913d686410ad3dd72e"
     },
     "data_snapshot/inventory.json.gz": {
-      "checksum": "1ef4dcbaab774d91a064fa2c3d8a6b4b"
+      "checksum": "43c55d21da521bab24472438bb4d2a35"
     },
     "data_snapshot/plans.json.gz": {
-      "checksum": "1ef4dcbaab774d91a064fa2c3d8a6b4b"
+      "checksum": "ab9cb2b245213ead6bb304a60392e9be"
     },
     "locales/en.json": {
       "checksum": "07febf88e26f5eb5836d44ebe3272965"
@@ -498,7 +498,7 @@
       "checksum": "b310108e74cd4056455c3feb027303d0"
     },
     "services/store.py": {
-      "checksum": "d0c52fcb480490ee3d09f5ed369eec8d"
+      "checksum": "f472f445ea8e39366238a529c92d3538"
     },
     "services/text.py": {
       "checksum": "13614c518fe1c4fdd01a0980728a3315"
