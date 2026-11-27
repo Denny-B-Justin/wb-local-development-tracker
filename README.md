@@ -70,7 +70,7 @@ Unity Catalog tables ──(SQL warehouse, OAuth SP)──► services/assemble.
 request ──► services/store.py (memory → cache → snapshot) ──► services/model.py ──► pages/*
 ```
 
-Databricks is never queried on a page request. Artifacts are rebuilt in a background thread at startup when missing or older than `LDT_DATA_MAX_AGE_SECONDS` (12 h), or on demand:
+Databricks is never queried on a page request. Artifacts are rebuilt in a background thread at startup when missing or older than `LDT_DATA_MAX_AGE_SECONDS` (6 h), or on demand:
 
 ```bash
 curl -X POST -H "Authorization: Bearer $LDT_REFRESH_TOKEN" https://<connect-host>/<app>/api/admin/refresh

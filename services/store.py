@@ -80,6 +80,9 @@ def _cached(name: str) -> Any:
             break
     # Exact match: a deleted cache file falls back to an older snapshot, which must not keep the stale memo.
     if hit and current is not None and hit[0] == current:
+        # A long-running process must still refresh: schedule_warm is a no-op while one runs or within the retry cooldown.
+        if time.time() - current > constants.DATA_MAX_AGE_SECONDS:
+            schedule_warm(reason=f"{name} is {(time.time() - current) / 3600:.1f}h old (max {constants.DATA_MAX_AGE_SECONDS / 3600:.0f}h)")
         return hit[1]
     loaded = _read(name)
     if loaded is None:
