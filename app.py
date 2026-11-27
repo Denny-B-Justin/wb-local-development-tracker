@@ -47,9 +47,39 @@ INDEX = """<!DOCTYPE html>
 
 _attached: set[int] = set()
 _csp_hashes: list[str] | None = None
+API_PATHS = ("/api/", "/healthz")
 
 
-def attach(flask_app: Flask) -> None:
+class ApiPathFix:
+    """Route API calls whose path carries Dash's URL prefix to the unprefixed API routes.
+
+    Posit Connect sets DASH_URL_BASE_PATHNAME (routes_pathname_prefix = /content/<guid>/) and
+    prefixes every request path with it before Flask routes it. Dash's own routes carry that
+    prefix; the API routes do not, so /content/<guid>/api/... would fall through to Dash's
+    catch-all and return the HTML page. This strips the prefix from API paths only.
+    """
+
+    def __init__(self, wsgi_app, dash_app: Dash):
+        self.wsgi_app = wsgi_app
+        self.dash_app = dash_app
+        self.logged = False
+
+    def __call__(self, environ, start_response):
+        path = environ.get("PATH_INFO", "")
+        prefix = (self.dash_app.config.routes_pathname_prefix or "/").rstrip("/")
+        if prefix and path.startswith(prefix + "/") and path[len(prefix):].startswith(API_PATHS):
+            environ["PATH_INFO"] = path[len(prefix):]
+            if not self.logged:
+                self.logged = True
+                log.info("API path arrived with the Dash prefix: %s -> %s (SCRIPT_NAME=%r); routing to the API (logged once)",
+                         path, environ["PATH_INFO"], environ.get("SCRIPT_NAME", ""))
+        elif "/api/" in path and not path.startswith(API_PATHS):
+            log.error("API path not routable: PATH_INFO=%r SCRIPT_NAME=%r routes_pathname_prefix=%r", path, environ.get("SCRIPT_NAME", ""),
+                      self.dash_app.config.routes_pathname_prefix)
+        return self.wsgi_app(environ, start_response)
+
+
+def attach(flask_app: Flask, dash_app: Dash) -> None:
     """Give a Flask server the tracker's API routes, config and hardening (once per server)."""
     if _csp_hashes is None or id(flask_app) in _attached:
         return
@@ -57,8 +87,10 @@ def attach(flask_app: Flask) -> None:
     flask_app.config.update(MAX_CONTENT_LENGTH=64 * 1024, JSON_SORT_KEYS=False, SESSION_COOKIE_SECURE=True, SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax")
     api.register(flask_app)
     security.harden(flask_app, _csp_hashes)
+    flask_app.wsgi_app = ApiPathFix(flask_app.wsgi_app, dash_app)
     rules = sorted(str(r) for r in flask_app.url_map.iter_rules() if str(r).startswith("/api/"))
-    log.info("API routes attached to Flask server %r (id %x): %s", flask_app.name, id(flask_app), rules)
+    log.info("API routes attached to Flask server %r (id %x): %s; also reachable under %sapi/", flask_app.name, id(flask_app), rules,
+             dash_app.config.routes_pathname_prefix)
 
 
 class TrackerDash(Dash):
@@ -75,7 +107,7 @@ class TrackerDash(Dash):
         if previous is not None and self.server is not previous:
             log.warning("Dash was re-bound to another Flask server (id %x -> %x) by the host; attaching the API routes there too",
                         id(previous), id(self.server))
-        attach(self.server)
+        attach(self.server, self)
 
 
 app = TrackerDash(
@@ -174,7 +206,7 @@ for module in (units, brief):
     module.register(app)
 # Hashes are final only once every callback is defined; servers bound later reuse them.
 _csp_hashes = list(app.csp_hashes())
-attach(app.server)
+attach(app.server, app)
 server = app.server
 _log_runtime()
 _log_settings()

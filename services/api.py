@@ -108,7 +108,7 @@ def register(server: Flask) -> None:
     def _unrouted_api():
         # Dash's catch-all answers any unknown path with the HTML page; an API caller must get a 404 instead.
         rule = request.url_rule.rule if request.url_rule else None
-        if request.path.startswith("/api/") and (rule is None or "<path:" in rule):
+        if "/api/" in request.path and (rule is None or "<path:" in rule):
             log.error("No API route matched %s %s (matched rule: %s); answering 404 instead of the HTML page", request.method, request.path, rule)
             return Response("Not found", status=404)
         return None
