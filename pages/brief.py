@@ -20,7 +20,10 @@ OUTPUT_LABELS = {"narrative": "brief.outputs.narrative", "alignment": "brief.out
 def selection(req: Request) -> tuple[dict[str, Any] | None, str]:
     theme = security.choice(req.params.get("score"), SCORE_THEMES, "prosperity")
     unit_id = security.unit_id(req.params.get("scope"))
-    row = req.model.row(req.year, unit_id) if unit_id else None
+    if not unit_id:
+        # No unit chosen yet: brief the first one in the scope list.
+        return next((r for r in req.model.rows(req.year) if r["scored"]), None), theme
+    row = req.model.row(req.year, unit_id)
     return (row if row and row["scored"] else None), theme
 
 
