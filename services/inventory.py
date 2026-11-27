@@ -13,7 +13,7 @@ import constants
 import countries
 
 from . import databricks
-from .text import clean, fold, slugify
+from .text import clean, fold, slugify, volume_slug
 
 log = logging.getLogger(__name__)
 
@@ -86,29 +86,68 @@ def _classify(name: str) -> dict[str, Any]:
             "parsing_status": "parsed" if parsed else "needs_review", "ai_ready": parsed}
 
 
-def _from_volume(country) -> list[dict[str, Any]]:
+NATIONAL_FOLDERS = {"national", "country"}
+TIMESTAMP_NAME = re.compile(r"^\d{8}-\d{6}$")
+
+
+def _from_volume(country, units: list[dict[str, str]]) -> list[dict[str, Any]]:
+    """One record per file under <volume>/<Country>/. The folders give the level, the area and the sector:
+    <level>/<area>/[<sector>/<year>/]<file>, e.g. municipal/kraljevo/general/unknown/x.pdf, districts/kabwe/x.pdf;
+    files under national/ (or directly under the country) are national documents."""
     subdir = country.source.documents_subdir or country.name
     files = databricks.list_volume(f"{constants.UC_DOCUMENTS_VOLUME.rstrip('/')}/{subdir}")
-    records = []
+    lookup: dict[str, dict[str, str]] = {}
+    for unit in units:
+        for key in (slugify(unit["name"]), volume_slug(unit["name"])):
+            lookup.setdefault(key, unit)
+    records: list[dict[str, Any]] = []
+    levels: dict[str, int] = {}
+    unmatched: set[str] = set()
     for item in files:
         if item["name"].startswith("."):
             continue
+        folders = item.get("folders") or []
+        level = folders[0].lower() if folders else "national"
+        levels[level] = levels.get(level, 0) + 1
+        national = level in NATIONAL_FOLDERS or len(folders) < 2
+        if national:
+            lsg, region = country.name, None
+        else:
+            unit = lookup.get(folders[1].lower())
+            if not unit:
+                unmatched.add(folders[1])
+            lsg, region = (unit["name"], unit["region"]) if unit else (folders[1].replace("-", " ").title(), None)
+        stem = os.path.splitext(item["name"])[0]
         meta = _classify(item["name"])
-        lsg = clean(item["parent"] or country.name, 160)
+        if TIMESTAMP_NAME.match(stem):
+            meta["publication_year"] = None  # an upload timestamp, not the publication year
+        year_folder = folders[3] if len(folders) > 3 else ""
+        if meta["publication_year"] is None and re.fullmatch(r"(?:19|20)\d{2}", year_folder):
+            meta["publication_year"] = int(year_folder)
+        sector = folders[2] if len(folders) > 2 else None
         records.append({
-            "country_code": country.iso3, "lsg_id": slugify(lsg), "lsg_name": lsg, "region_name": None,
-            "document_title": clean(os.path.splitext(item["name"])[0], 300), "source_url": None,
-            "source_status": "found", "translation_status": "unknown", "notes": None, "last_updated": None, **meta,
+            "country_code": country.iso3, "lsg_id": slugify(lsg), "lsg_name": clean(lsg, 160), "region_name": region,
+            "document_title": clean(stem, 300), "source_url": None, "source_status": "found", "translation_status": "unknown",
+            "notes": f"National document ({sector})" if national and sector else "National document" if national else None,
+            "last_updated": None, "level": "national" if national else "local", "sector": sector, "volume_path": item["path"], **meta,
         })
+    local = [r for r in records if r["level"] == "local"]
+    log.info("%s strategy inventory: %d files (by folder: %s); %d national, %d local covering %d of %d %s",
+             country.iso3, len(records), levels, len(records) - len(local), len(local), len({r["lsg_id"] for r in local}),
+             len(units), "units" if units else "units (unit list unavailable; area names come from folder names)")
+    if unmatched and units:
+        log.warning("%s strategy inventory: %d area folders match no unit (shown under the folder name): %s",
+                    country.iso3, len(unmatched), sorted(unmatched)[:15])
     return records
 
 
-def load_all_from_databricks() -> dict[str, list[dict[str, Any]]]:
+def load_all_from_databricks(units: dict[str, list[dict[str, str]]] | None = None) -> dict[str, list[dict[str, Any]]]:
+    """``units``: per country, the local units as {"name", "region"}, used to name the areas found in the volume."""
     data = _from_table()
     for country in countries.REGISTRY:
         if country.features.strategy_inventory and not data.get(country.iso3):
             try:
-                data[country.iso3] = _from_volume(country)
+                data[country.iso3] = _from_volume(country, (units or {}).get(country.iso3, []))
             except Exception as exc:  # noqa: BLE001
                 log.warning("%s: strategy inventory volume listing FAILED (%s: %s)", country.iso3, type(exc).__name__, exc)
                 data[country.iso3] = []
@@ -159,7 +198,7 @@ def _lsg_key(r: dict[str, Any]) -> str:
 
 def summarize(records: list[dict[str, Any]], expected: int) -> dict[str, Any]:
     documents = [r for r in records if _has_source(r)]
-    covered = {_lsg_key(r) for r in documents}
+    covered = {_lsg_key(r) for r in documents if r.get("level") != "national"}
     seen: set[str] = set()
     missing = []
     for r in records:

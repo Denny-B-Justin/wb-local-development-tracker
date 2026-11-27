@@ -2,17 +2,23 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
+import os
+import re
 from typing import Any
 
 import pandas as pd
 
 import constants
+import countries
 
 from . import databricks
-from .text import clean, plan_key
+from .inventory import NATIONAL_FOLDERS, TIMESTAMP_NAME
+from .text import clean, plan_key, slugify, volume_slug
 
 log = logging.getLogger(__name__)
+READABLE_EXTENSIONS = {"pdf", "docx", "txt", "md", "html", "htm"}
 
 
 def _safe_link(value: Any) -> str:
@@ -68,22 +74,93 @@ def report(shaped: dict[str, Any], areas: dict[str, list[str]]) -> None:
                         iso3, len(stray), stray[:12], sorted(keys)[:12])
 
 
+def document_id(path: str) -> str:
+    return hashlib.sha1(path.encode("utf-8")).hexdigest()[:20]
+
+
+def _volume_title(stem: str, folder: str | None, area: str) -> str:
+    if TIMESTAMP_NAME.match(stem):
+        return f"{area} plan document ({stem[:4]}-{stem[4:6]}-{stem[6:8]})"
+    if folder and stem.lower().startswith(folder.lower()):
+        stem = area + stem[len(folder):]
+    title = re.sub(r"[-_]+", " ", stem).strip()
+    return title[:1].upper() + title[1:]
+
+
+def _volume_rank(doc: dict[str, Any]) -> tuple:
+    """The brief reads the first document of an area: readable formats first, then files named as plans."""
+    name = doc["volumePath"].rsplit("/", 1)[-1].lower()
+    return (name.rsplit(".", 1)[-1] not in READABLE_EXTENSIONS, "plan" not in name, name)
+
+
+def from_volume(country, areas: list[str]) -> dict[str, Any]:
+    """Plans stored in the documents volume under <Country>/<level>/<area>/.../<file>; files under national/ are national plans.
+    Area folders are matched to ``areas`` (the names a local plan is filed under)."""
+    root = f"{constants.UC_DOCUMENTS_VOLUME.rstrip('/')}/{country.source.documents_subdir or country.name}"
+    lookup: dict[str, str] = {}
+    for name in areas:
+        lookup.setdefault(slugify(name), name)
+        lookup.setdefault(volume_slug(name), name)
+    bucket: dict[str, Any] = {"local": {}, "national": []}
+    unmatched: set[str] = set()
+    for item in databricks.list_volume(root):
+        if item["name"].startswith("."):
+            continue
+        folders = item.get("folders") or []
+        stem = os.path.splitext(item["name"])[0]
+        doc = {"id": document_id(item["path"]), "volumePath": item["path"], "type": folders[2] if len(folders) > 2 else None,
+               "notes": None, "scoreTheme": None}
+        if not folders or folders[0].lower() in NATIONAL_FOLDERS or len(folders) < 2:
+            bucket["national"].append({**doc, "title": _volume_title(stem, None, country.name), "level": "national", "area": None})
+            continue
+        area = lookup.get(folders[1].lower())
+        if not area:
+            unmatched.add(folders[1])
+            continue
+        bucket["local"].setdefault(plan_key(area), []).append({**doc, "title": _volume_title(stem, folders[1], area), "level": "local", "area": area})
+    bucket["national"].sort(key=_volume_rank)
+    for docs in bucket["local"].values():
+        docs.sort(key=_volume_rank)
+    for doc in [*bucket["national"], *(d for docs in bucket["local"].values() for d in docs)]:
+        doc["link"] = f"api/document/{doc['id']}"
+    log.info("%s plan sources from volume %s: %d national documents, %d areas with local documents (%d documents)", country.iso3, root,
+             len(bucket["national"]), len(bucket["local"]), sum(len(d) for d in bucket["local"].values()))
+    if unmatched:
+        log.warning("%s plan sources from volume: %d area folders match no %s name and were skipped: %s", country.iso3, len(unmatched),
+                    country.plan_source_level, sorted(unmatched)[:15])
+    return bucket
+
+
+def _merge(shaped: dict[str, Any], iso3: str, extra: dict[str, Any]) -> None:
+    """Table rows first (they are curated), then volume documents."""
+    bucket = shaped.setdefault(iso3, {"local": {}, "national": []})
+    bucket["national"] += extra["national"]
+    for key, docs in extra["local"].items():
+        bucket["local"].setdefault(key, []).extend(docs)
+
+
 def load_from_databricks(areas: dict[str, list[str]] | None = None) -> dict[str, Any]:
     """``areas`` maps ISO3 to the area names a local plan is matched against, for the coverage report."""
     table = constants.UC_SHARED_TABLES["plan_sources"]
     if not databricks.table_exists(table):
-        log.error("Plan sources: %s does not exist, so every area shows \"No plan\" and planning briefs cannot run alignment, SWOT "
-                  "or recommendations. Create it with scripts/uc_tables.sql (or set LDT_PLAN_SOURCES_TABLE) and add plan rows.",
-                  databricks.table_name(table))
+        log.warning("Plan sources: table %s does not exist; using the documents volume only (%s)", databricks.table_name(table),
+                    constants.UC_DOCUMENTS_VOLUME)
         frame = pd.DataFrame()
     else:
         frame = databricks.read_table(table)
     shaped = shape(frame)
     if frame.empty:
-        log.warning("Plan sources: none loaded (%s is missing or empty)", table)
+        log.info("Plan sources: no rows from %s", table)
     else:
         log.info("Plan sources: %d rows, %d kept (active, with an http(s) link) -> %s", len(frame),
                  sum(len(v["national"]) + sum(len(d) for d in v["local"].values()) for v in shaped.values()),
                  {k: {"national": len(v["national"]), "local areas": len(v["local"])} for k, v in shaped.items()})
+    for country in countries.REGISTRY:
+        if not country.features.plan_sources or country.iso3 not in (areas or {}):
+            continue
+        try:
+            _merge(shaped, country.iso3, from_volume(country, areas[country.iso3]))
+        except Exception as exc:  # noqa: BLE001
+            log.warning("%s plan sources: volume listing FAILED (%s: %s)", country.iso3, type(exc).__name__, exc)
     report(shaped, areas or {})
     return shaped

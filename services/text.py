@@ -23,6 +23,11 @@ def clean(value: object, max_length: int = 200) -> str:
     return re.sub(r"\s{2,}", " ", text).strip()[:max_length]
 
 
+def volume_slug(value: str | None) -> str:
+    """Folder names in the documents volume drop every non-ASCII letter (Ćićevac -> i-evac, Vršac -> vr-ac)."""
+    return re.sub(r"[^a-z0-9]+", "-", (value or "").lower()).strip("-")
+
+
 def plan_key(value: str | None) -> str:
     return re.sub(r"\s+", " ", (value or "").strip().lower())
 

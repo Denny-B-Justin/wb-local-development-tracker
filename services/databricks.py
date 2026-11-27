@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from typing import Any, Iterator
 
@@ -160,40 +161,87 @@ def read_optional(table: str, where: str = "", parameters: dict[str, Any] | None
     return query(f"SELECT * FROM IDENTIFIER(:table) {where}", params)
 
 
-def list_volume(root: str, max_depth: int = 4) -> list[dict[str, Any]]:
-    if not configured():
-        return []
+VOLUME_LISTING_TTL_SECONDS = 600
+_volume_listings: dict[str, tuple[float, list[dict[str, Any]]]] = {}
+
+
+def _workspace_client():
     from databricks.sdk import WorkspaceClient
     from databricks.sdk.core import Config
 
-    client = WorkspaceClient(config=Config(
+    return WorkspaceClient(config=Config(
         host=f"https://{constants.DATABRICKS_SERVER_HOSTNAME}",
         client_id=constants.DATABRICKS_CLIENT_ID,
         client_secret=constants.DATABRICKS_CLIENT_SECRET,
         http_timeout_seconds=20,
         retry_timeout_seconds=40,
     ))
-    files: list[dict[str, Any]] = []
 
-    def walk(path: str, depth: int) -> None:
-        if depth > max_depth:
-            return
+
+def download_file(path: str, max_bytes: int) -> bytes:
+    """A file from a Unity Catalog volume, with a size cap."""
+    if not configured():
+        raise DatabricksNotConfigured("Databricks is not configured")
+    started = time.time()
+    contents = _workspace_client().files.download(path).contents
+    data = contents.read(max_bytes + 1)
+    if len(data) > max_bytes:
+        log.warning("Volume download ABORTED: %s is larger than %.0f MB", path, max_bytes / 1048576)
+        raise RuntimeError("The plan document is too large to process.")
+    log.info("Volume download OK in %.1fs: %s (%.1f KB)", time.time() - started, path, len(data) / 1024)
+    return data
+
+
+def list_volume(root: str, max_depth: int = 12) -> list[dict[str, Any]]:
+    """Every file under ``root``, recursively. ``folders`` holds the folder names between ``root`` and the file.
+    Listings are reused for a few minutes, so plan sources and the strategy inventory share one walk."""
+    if not configured():
+        return []
+    root = root.rstrip("/")
+    with _lock:
+        hit = _volume_listings.get(root)
+    if hit and time.time() - hit[0] < VOLUME_LISTING_TTL_SECONDS:
+        return hit[1]
+    client = _workspace_client()
+    files: list[dict[str, Any]] = []
+    folders_seen = 0
+    started = time.time()
+
+    def listing(path: str) -> list[Any] | None:
         try:
-            entries = list(client.files.list_directory_contents(path))
+            return list(client.files.list_directory_contents(path))
         except Exception as exc:  # noqa: BLE001
             log.warning("Cannot list volume path %s: %s", path, exc)
-            return
-        for entry in entries:
-            entry_path = (entry.path or "").rstrip("/")
-            if entry.is_directory:
-                walk(entry_path, depth + 1)
-            else:
-                files.append({
-                    "path": entry_path,
-                    "name": entry_path.rsplit("/", 1)[-1],
-                    "parent": entry_path.rsplit("/", 2)[-2] if entry_path.count("/") > 1 else "",
-                    "size": getattr(entry, "file_size", None),
-                })
+            return None
 
-    walk(root.rstrip("/"), 0)
+    # One level at a time, the folders of a level in parallel: a country can have hundreds of folders.
+    level, depth = [root], 0
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        while level:
+            if depth > max_depth:
+                log.warning("Volume: %d folders more than %d levels below %s were not listed, e.g. %s", len(level), max_depth, root, level[:3])
+                break
+            next_level = []
+            for entries in pool.map(listing, level):
+                if entries is None:
+                    continue
+                folders_seen += 1
+                for entry in entries:
+                    entry_path = (entry.path or "").rstrip("/")
+                    if entry.is_directory:
+                        next_level.append(entry_path)
+                        continue
+                    relative = entry_path[len(root) + 1:] if entry_path.startswith(root + "/") else entry_path.rsplit("/", 1)[-1]
+                    files.append({
+                        "path": entry_path,
+                        "name": entry_path.rsplit("/", 1)[-1],
+                        "parent": entry_path.rsplit("/", 2)[-2] if entry_path.count("/") > 1 else "",
+                        "folders": relative.split("/")[:-1],
+                        "size": getattr(entry, "file_size", None),
+                    })
+            level, depth = next_level, depth + 1
+    log.info("Volume %s: %d files in %d folders, listed in %.1fs (deepest file %d folders down)", root, len(files), folders_seen,
+             time.time() - started, max((len(f["folders"]) for f in files), default=0))
+    with _lock:
+        _volume_listings[root] = (time.time(), files)
     return files

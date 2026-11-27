@@ -6,14 +6,16 @@ import hashlib
 import json
 import logging
 from typing import Any
+from urllib.parse import quote
 
 from flask import Flask, Response, jsonify, request
 
 import constants
 import countries
 
-from . import catalog, model as model_module, security, state, store
+from . import catalog, databricks, model as model_module, security, state, store
 from ai import cache as ai_cache
+from ai import documents as ai_documents
 from ai import pipeline
 
 log = logging.getLogger(__name__)
@@ -129,6 +131,24 @@ def register(server: Flask) -> None:
             return Response(status=304)
         log.info("Geometry %s: served %.1f KB (gzip JSON)", country.iso3, len(data) / 1024)
         return Response(data, mimetype="application/json", headers={"Content-Encoding": "gzip", "ETag": etag, "Cache-Control": "no-cache", "Vary": "Accept-Encoding"})
+
+    @server.get("/api/document/<doc_id>")
+    def volume_document(doc_id: str):
+        # Only documents listed in the plan sources are served, never an arbitrary volume path.
+        doc_id = doc_id[:40]
+        doc = next((d for bucket in store.plan_sources().values() for d in [*bucket.get("national", []), *(x for docs in bucket.get("local", {}).values() for x in docs)]
+                    if d.get("id") == doc_id and d.get("volumePath")), None)
+        if not doc:
+            log.warning("Document %s: not in the plan sources; 404", doc_id)
+            return Response("Not found", status=404)
+        try:
+            data = databricks.download_file(doc["volumePath"], constants.AI_DOCUMENT_MAX_BYTES)
+        except Exception as exc:  # noqa: BLE001
+            log.warning("Document %s: download of %s FAILED (%s: %s)", doc_id, doc["volumePath"], type(exc).__name__, exc)
+            return Response("The document could not be loaded.", status=502)
+        name = doc["volumePath"].rsplit("/", 1)[-1]
+        return Response(data, mimetype=ai_documents.content_type_of(name), headers={
+            "Content-Disposition": f"inline; filename*=UTF-8''{quote(name)}", "Cache-Control": "private, max-age=3600"})
 
     @server.get("/api/export/units.csv")
     def export_units():

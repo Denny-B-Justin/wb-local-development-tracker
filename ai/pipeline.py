@@ -171,8 +171,8 @@ def load_cached(context: dict[str, Any]) -> dict[str, dict[str, Any]]:
 
 
 def _document(stage: str, source: dict[str, Any], label: str, area: str | None, country: str) -> dict[str, Any]:
-    log.info("%s: %s uses \"%s\" (%s)", stage, label, source["title"], documents.show_url(source["link"]))
-    data, content_type, final_url = documents.fetch_document(source["link"])
+    log.info("%s: %s uses \"%s\" (%s)", stage, label, source["title"], documents.show_url(source.get("volumePath") or source["link"]))
+    data, content_type, final_url = documents.fetch_source(source)
     text = documents.extract_text(data, content_type)
     if len(text.strip()) < 200:
         log.warning("%s: only %d characters of text from %s (%s); at least 200 are needed", stage, len(text.strip()),
@@ -213,9 +213,9 @@ def _generate(stage: str, context: dict[str, Any], results: dict[str, dict]) -> 
         return _result(stage, reply.text, {"series": len(context["indicatorSeries"])}, refs_data, reply.model)
     if stage == "province_plan_context":
         if not context["provincePlanCandidates"]:
-            log.warning("%s: no plan row is filed under \"%s\" for %s in %s; add one there (plan_level, province = that name)", stage,
+            log.warning("%s: no plan row is filed under \"%s\" for %s in %s; add one there, or put the plan in the documents volume under <Country>/<level>/<area folder>/", stage,
                         context["localPlanUnitName"], context["country"]["code"], constants.UC_SHARED_TABLES["plan_sources"])
-            raise RuntimeError(f"No local/SNG plan URL is available for {context['localPlanUnitName']}.")
+            raise RuntimeError(f"No local/SNG plan is available for {context['localPlanUnitName']}.")
         return _document(stage, context["provincePlanCandidates"][0], f"{context['localPlanUnitName']} local/SNG plan", context["localPlanUnitName"], context["country"]["code"])
     if stage == "national_plan_context":
         if not context["nationalPlanSources"]:

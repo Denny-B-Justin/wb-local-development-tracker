@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import html
 import io
 import ipaddress
 import logging
+import mimetypes
 import re
 import socket
 import time
+import zipfile
 from typing import Any
 from urllib.parse import urljoin, urlparse
 
@@ -26,8 +29,25 @@ MAX_PDF_PAGES = 400
 
 def show_url(url: str) -> str:
     """The URL for logs: scheme, host and path only, never the query string (it may carry a token)."""
+    if url.startswith("/Volumes/"):
+        return url
     parsed = urlparse(url)
     return f"{parsed.scheme}://{parsed.hostname or ''}{parsed.path}"
+
+
+def content_type_of(name: str) -> str:
+    return mimetypes.guess_type(name)[0] or "application/octet-stream"
+
+
+def fetch_source(source: dict[str, Any]) -> tuple[bytes, str, str]:
+    """A plan document from the documents volume (``volumePath``) or from the web (``link``)."""
+    path = source.get("volumePath")
+    if not path:
+        return fetch_document(source["link"])
+    from services import databricks
+
+    log.info("Plan fetch started: %s (documents volume)", path)
+    return databricks.download_file(path, constants.AI_DOCUMENT_MAX_BYTES), content_type_of(path), path
 
 
 def _public_host(host: str) -> bool:
@@ -89,8 +109,27 @@ def fetch_document(url: str, max_redirects: int = 5) -> tuple[bytes, str, str]:
     raise RuntimeError("Too many redirects for the plan link.")
 
 
+def _docx_text(data: bytes) -> str | None:
+    """Paragraph text of a Word .docx file, or None when ``data`` is not one."""
+    try:
+        with zipfile.ZipFile(io.BytesIO(data)) as archive:
+            xml = archive.read("word/document.xml").decode("utf-8", errors="ignore")
+    except (zipfile.BadZipFile, KeyError):
+        return None
+    paragraphs = (html.unescape(re.sub(r"<[^>]+>", "", p)).strip() for p in re.split(r"</w:p>", xml.replace("<w:tab/>", " ")))
+    return "\n\n".join(p for p in paragraphs if p)
+
+
 def extract_text(data: bytes, content_type: str) -> str:
     started = time.time()
+    if data[:2] == b"PK":
+        text = _docx_text(data)
+        if text is not None:
+            log.info("Plan text extracted in %.1fs: Word document, %d characters", time.time() - started, len(text))
+            return text
+    if data[:8] == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1":
+        log.warning("Plan text extraction: legacy Word .doc files cannot be read; save the plan as PDF or .docx")
+        return ""
     if data[:5] == b"%PDF-" or "pdf" in content_type:
         from pypdf import PdfReader
 

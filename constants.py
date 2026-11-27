@@ -51,7 +51,7 @@ UC_CATALOG = _env("LDT_CATALOG", "prd_mega")
 UC_SCHEMA = _env("LDT_SCHEMA", "sgpbpi163")
 UC_DOCUMENTS_VOLUME = _env(
     "LDT_DOCUMENTS_VOLUME",
-    "/Volumes/prd_mega/sgpbpi163/vgpbpi163/LDT/Local Development Plans",
+    "/Volumes/prd_mega/sgpbpi163/pimpam_policy/LDT_Local Development Plans",
 )
 
 IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,127}$")
